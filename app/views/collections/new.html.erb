@@ -1,0 +1,63 @@
+<div class="container mx-auto px-4 py-6">
+  <div class="max-w-2xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold text-gray-800">새 수거 예약</h1>
+      <%= link_to "← 목록으로", collections_path, class: "text-blue-600 hover:text-blue-800" %>
+    </div>
+
+    <div class="bg-white shadow rounded-lg p-6">
+      <%= form_with model: @collection, local: true, class: "space-y-4" do |form| %>
+        <% if @collection.errors.any? %>
+          <div class="bg-red-50 border border-red-200 rounded p-4">
+            <h4 class="text-red-800 font-medium">오류가 발생했습니다:</h4>
+            <ul class="mt-2 text-red-700 text-sm">
+              <% @collection.errors.full_messages.each do |message| %>
+                <li>• <%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div>
+          <%= form.label :farm_name, "농장명", class: "block text-sm font-medium text-gray-700" %>
+          <%= form.text_field :farm_name, class: "mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+        </div>
+
+        <div>
+          <%= form.label :quantity, "수량 (박스)", class: "block text-sm font-medium text-gray-700" %>
+          <%= form.number_field :quantity, class: "mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+        </div>
+
+        <div>
+          <%= form.label :market_id, "공판장", class: "block text-sm font-medium text-gray-700" %>
+          <%= form.select :market_id, 
+              grouped_options_for_select(@markets.group_by(&:district).transform_values { |markets| 
+                markets.map { |m| [m.name, m.id] }
+              }, @collection.market_id),
+              { prompt: "공판장을 선택하세요" },
+              { class: "mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" } %>
+        </div>
+
+        <div>
+          <%= form.label :receiver, "전화 받은 사람", class: "block text-sm font-medium text-gray-700" %>
+          <%= form.select :receiver, 
+              options_for_select([["A", "A"], ["B", "B"]], @collection.receiver),
+              { prompt: "담당자를 선택하세요" },
+              { class: "mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" } %>
+        </div>
+
+        <div>
+          <%= form.label :scheduled_at, "예약 일시", class: "block text-sm font-medium text-gray-700" %>
+          <%= form.datetime_local_field :scheduled_at, 
+              value: @collection.scheduled_at&.strftime("%Y-%m-%dT%H:%M") || Time.current.strftime("%Y-%m-%dT%H:%M"),
+              class: "mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+        </div>
+
+        <div class="flex space-x-4 pt-4">
+          <%= form.submit "예약 등록", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+          <%= link_to "취소", collections_path, class: "bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
