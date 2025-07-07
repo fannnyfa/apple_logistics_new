@@ -1,0 +1,7 @@
+<%= turbo_stream.replace "collection_#{@collection.id}" do %>
+  <%= render 'collection_row', collection: @collection %>
+<% end %>
+
+<%= turbo_stream.replace "collection_mobile_#{@collection.id}" do %>
+  <%= render 'collection_card', collection: @collection %>
+<% end %>

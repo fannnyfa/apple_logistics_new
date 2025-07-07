@@ -10,14 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_01_172519) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_02_165944) do
   create_table "collections", force: :cascade do |t|
     t.string "farm_name"
     t.integer "quantity"
     t.integer "market_id", null: false
     t.string "receiver"
     t.datetime "scheduled_at"
-    t.string "status"
+    t.integer "status", default: 1, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["market_id"], name: "index_collections_on_market_id"

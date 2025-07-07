@@ -1,8 +1,8 @@
 <div class="container mx-auto px-4 py-6">
   <div class="max-w-2xl mx-auto">
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold text-gray-800">수거 예약 수정</h1>
-      <%= link_to "← 목록으로", collections_path, class: "text-blue-600 hover:text-blue-800" %>
+      <h1 class="text-2xl font-bold text-gray-800">수거접수 수정</h1>
+      <%= link_to "← 홈으로", collections_path, class: "text-blue-600 hover:text-blue-800" %>
     </div>
 
     <div class="bg-white shadow rounded-lg p-6">
@@ -19,12 +19,12 @@
         <% end %>
 
         <div>
-          <%= form.label :farm_name, "농장명", class: "block text-sm font-medium text-gray-700" %>
+          <%= form.label :farm_name, "이름", class: "block text-sm font-medium text-gray-700" %>
           <%= form.text_field :farm_name, class: "mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
         </div>
 
         <div>
-          <%= form.label :quantity, "수량 (박스)", class: "block text-sm font-medium text-gray-700" %>
+          <%= form.label :quantity, "수량", class: "block text-sm font-medium text-gray-700" %>
           <%= form.number_field :quantity, class: "mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
         </div>
 
@@ -39,17 +39,9 @@
         </div>
 
         <div>
-          <%= form.label :receiver, "전화 받은 사람", class: "block text-sm font-medium text-gray-700" %>
-          <%= form.select :receiver, 
-              options_for_select([["A", "A"], ["B", "B"]], @collection.receiver),
-              { prompt: "담당자를 선택하세요" },
-              { class: "mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" } %>
-        </div>
-
-        <div>
-          <%= form.label :scheduled_at, "예약 일시", class: "block text-sm font-medium text-gray-700" %>
-          <%= form.datetime_local_field :scheduled_at, 
-              value: @collection.scheduled_at&.strftime("%Y-%m-%dT%H:%M"),
+          <%= form.label :scheduled_at, "접수 일자", class: "block text-sm font-medium text-gray-700" %>
+          <%= form.date_field :scheduled_at, 
+              value: (@collection.scheduled_at || Date.today).strftime("%Y-%m-%d"),
               class: "mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
         </div>
 

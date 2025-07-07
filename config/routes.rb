@@ -2,8 +2,12 @@ Rails.application.routes.draw do
   root "collections#index"
   
   resources :collections do
+    collection do
+      get :history
+    end
     member do
       patch :update_status
+      patch :revert
     end
   end
   
