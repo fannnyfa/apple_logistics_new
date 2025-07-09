@@ -1,34 +1,40 @@
-<div class="border-b border-gray-200 p-4" id="collection_mobile_<%= collection.id %>">
-  <div class="flex justify-between items-start mb-2">
-    <h3 class="text-xl font-semibold text-gray-900"><%= collection.farm_name %></h3>
+<div class="border-b border-slate-200 p-4 last:border-b-0" id="collection_mobile_<%= collection.id %>">
+  <div class="flex justify-between items-start mb-3">
+    <h3 class="text-lg font-semibold text-slate-900"><%= collection.farm_name %></h3>
     <% if collection.in_progress? %>
-      <span class="inline-flex px-2 py-1 text-xs font-bold rounded-lg bg-blue-100 text-blue-800 border-2 border-blue-500">접수완료</span>
+      <%= render 'shared/components/badge', variant: 'info' do %>
+        접수완료
+      <% end %>
     <% elsif collection.completed? %>
-      <span class="inline-flex px-2 py-1 text-xs font-bold rounded-lg bg-green-100 text-green-800 border-2 border-green-500">수거완료</span>
+      <%= render 'shared/components/badge', variant: 'success' do %>
+        수거완료
+      <% end %>
     <% else %>
-      <span class="inline-flex px-2 py-1 text-xs font-bold rounded-lg bg-gray-400 text-white">상태미정</span>
+      <%= render 'shared/components/badge', variant: 'secondary' do %>
+        상태미정
+      <% end %>
     <% end %>
   </div>
   
-  <div class="text-sm text-gray-500 space-y-1 mb-3">
-    <div><span class="font-medium">수량:</span> <span class="text-lg font-semibold text-gray-800"><%= collection.quantity %></span></div>
+  <div class="text-sm text-slate-600 space-y-1 mb-4">
+    <div><span class="font-medium">수량:</span> <span class="text-base font-semibold text-slate-900"><%= collection.quantity %></span></div>
     <div><span class="font-medium">공판장:</span> <%= collection.market.name %> (<%= collection.market.district %>)</div>
     <div><span class="font-medium">접수일자:</span> <%= collection.scheduled_at.strftime("%m/%d") %></div>
   </div>
   
-  <div class="flex flex-wrap gap-3">
+  <div class="flex flex-wrap gap-2">
     <% if collection.in_progress? %>
       <%= link_to "수거완료", update_status_collection_path(collection, status: 'completed'), 
           data: { "turbo-method": :patch },
-          class: "bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium" %>
+          class: "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-green-500 text-white hover:bg-green-600 shadow-sm h-8 px-3 text-xs" %>
     <% elsif collection.completed? %>
       <%= link_to "되돌리기", revert_collection_path(collection), 
           data: { "turbo-method": :patch, "turbo-confirm": "접수 상태로 되돌리시겠습니까?" },
-          class: "bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-medium" %>
+          class: "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-yellow-500 text-white hover:bg-yellow-600 shadow-sm h-8 px-3 text-xs" %>
     <% end %>
-    <%= link_to "수정", edit_collection_path(collection), class: "bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium" %>
+    <%= link_to "수정", edit_collection_path(collection), class: "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-100 text-slate-900 hover:bg-slate-200 border border-slate-200 h-8 px-3 text-xs" %>
     <%= link_to "삭제", collection_path(collection), 
         data: { "turbo-method": :delete, "turbo-confirm": "정말 삭제하시겠습니까?" }, 
-        class: "bg-red-100 text-red-800 px-4 py-2 rounded-full text-sm font-medium" %>
+        class: "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-red-500 text-white hover:bg-red-600 shadow-sm h-8 px-3 text-xs" %>
   </div>
 </div>

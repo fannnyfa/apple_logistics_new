@@ -1,0 +1,16 @@
+<%#
+  Table component inspired by Shadcn UI
+  Usage: render 'shared/components/table' do ... end
+%>
+<% 
+  classes ||= ''
+  
+  base_classes = "w-full"
+  all_classes = "#{base_classes} #{classes}"
+%>
+
+<div class="relative w-full overflow-auto">
+  <table class="<%= all_classes %> caption-bottom text-sm">
+    <%= yield %>
+  </table>
+</div>

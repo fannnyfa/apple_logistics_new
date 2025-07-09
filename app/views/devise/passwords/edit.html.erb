@@ -1,0 +1,81 @@
+<% content_for :page_title, "비밀번호 변경" %>
+
+<div class="container mx-auto max-w-md p-6">
+  <div class="space-y-8">
+    <!-- Header -->
+    <div class="space-y-2 text-center">
+      <h1 class="text-3xl font-bold tracking-tight text-foreground">비밀번호 변경</h1>
+      <p class="text-sm text-muted-foreground">새로운 비밀번호를 설정하세요</p>
+    </div>
+
+    <!-- Main Form Card -->
+    <%= render 'shared/components/shadcn_card', classes: 'w-full' do %>
+      <div class="space-y-6">
+        <div class="space-y-2">
+          <h2 class="text-xl font-semibold text-foreground">새 비밀번호 설정</h2>
+          <p class="text-sm text-muted-foreground">보안을 위해 강력한 비밀번호를 설정해주세요.</p>
+        </div>
+        
+        <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put, class: "space-y-4" }) do |f| %>
+          <%= render "devise/shared/error_messages", resource: resource %>
+          <%= f.hidden_field :reset_password_token %>
+
+          <!-- New Password Field -->
+          <%= render 'shared/components/shadcn_form_input', 
+              form: f, 
+              field: :password, 
+              label: '새 비밀번호', 
+              type: 'password',
+              required: true,
+              description: @minimum_password_length ? "최소 #{@minimum_password_length}자 이상" : nil %>
+
+          <!-- Password Confirmation Field -->
+          <%= render 'shared/components/shadcn_form_input', 
+              form: f, 
+              field: :password_confirmation, 
+              label: '새 비밀번호 확인', 
+              type: 'password',
+              required: true,
+              description: '비밀번호를 다시 입력하여 확인해주세요' %>
+
+          <!-- Submit Button -->
+          <div class="pt-4">
+            <%= render 'shared/components/shadcn_button', variant: 'default', classes: 'w-full' do %>
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+              </svg>
+              비밀번호 변경
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <!-- Security Tips Card -->
+    <%= render 'shared/components/shadcn_card', classes: 'w-full bg-blue-50/50 border-blue-200' do %>
+      <div class="space-y-4">
+        <div class="flex items-center space-x-3">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-sm font-medium text-blue-900">보안 팁</h3>
+          </div>
+        </div>
+        
+        <div class="text-sm text-blue-800 space-y-2">
+          <p>• 대문자, 소문자, 숫자, 특수문자를 포함하세요</p>
+          <p>• 개인정보나 쉽게 추측할 수 있는 단어는 피하세요</p>
+          <p>• 다른 사이트에서 사용하지 않는 고유한 비밀번호를 사용하세요</p>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Links -->
+    <div class="text-center">
+      <%= render "devise/shared/links" %>
+    </div>
+  </div>
+</div>

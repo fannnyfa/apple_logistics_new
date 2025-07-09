@@ -1,0 +1,29 @@
+<div class="text-center space-y-2">
+  <%- if controller_name != 'sessions' %>
+    <%= link_to "로그인", new_session_path(resource_name), class: "text-slate-600 hover:text-slate-900 text-sm font-medium transition-colors underline-offset-4 hover:underline" %>
+  <% end %>
+
+  <%- if devise_mapping.registerable? && controller_name != 'registrations' %>
+    <%= link_to "회원가입", new_registration_path(resource_name), class: "text-slate-600 hover:text-slate-900 text-sm font-medium transition-colors underline-offset-4 hover:underline block" %>
+  <% end %>
+
+  <%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
+    <%= link_to "비밀번호를 잊으셨나요?", new_password_path(resource_name), class: "text-slate-500 hover:text-slate-700 text-sm transition-colors underline-offset-4 hover:underline block" %>
+  <% end %>
+
+  <%- if devise_mapping.confirmable? && controller_name != 'confirmations' %>
+    <%= link_to "인증 이메일을 받지 못하셨나요?", new_confirmation_path(resource_name), class: "text-slate-500 hover:text-slate-700 text-sm transition-colors underline-offset-4 hover:underline block" %>
+  <% end %>
+
+  <%- if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks' %>
+    <%= link_to "계정 잠금 해제 이메일을 받지 못하셨나요?", new_unlock_path(resource_name), class: "text-slate-500 hover:text-slate-700 text-sm transition-colors underline-offset-4 hover:underline block" %>
+  <% end %>
+
+  <%- if devise_mapping.omniauthable? %>
+    <%- resource_class.omniauth_providers.each do |provider| %>
+      <%= button_to "#{OmniAuth::Utils.camelize(provider)}로 로그인", omniauth_authorize_path(resource_name, provider), 
+          data: { turbo: false }, 
+          class: "w-full inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-300 bg-white hover:bg-slate-50 text-slate-900 h-10 px-4 py-2 cursor-pointer mt-2" %>
+    <% end %>
+  <% end %>
+</div>

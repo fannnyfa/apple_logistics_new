@@ -14,17 +14,27 @@ class CollectionsController < ApplicationController
   end
 
   def history
-    @date = params[:date]&.to_date || Date.current
-    @collections = Collection.includes(:market).by_date(@date)
+    @selected_date = params[:date]&.to_date
     
-    # 필터 적용
-    @collections = @collections.where(market_id: params[:market_id]) if params[:market_id].present?
-    @collections = @collections.where(status: params[:status]) if params[:status].present?
-    @collections = @collections.where("receiver ILIKE ?", "%#{params[:receiver]}%") if params[:receiver].present?
+    if @selected_date.present?
+      # 선택된 날짜의 시작과 끝 시간 계산
+      start_time = @selected_date.beginning_of_day
+      end_time = @selected_date.end_of_day
+      
+      @past_collections = Collection.includes(:market).where(scheduled_at: start_time..end_time)
+      
+      # 필터 적용
+      @past_collections = @past_collections.where(market_id: params[:market_id]) if params[:market_id].present?
+      @past_collections = @past_collections.where(status: params[:status]) if params[:status].present?
+      @past_collections = @past_collections.where("receiver ILIKE ?", "%#{params[:receiver]}%") if params[:receiver].present?
+      
+      @past_collections = @past_collections.order(scheduled_at: :desc)
+    else
+      @past_collections = Collection.none
+    end
     
-    @collections = @collections.order(:scheduled_at)
     @markets = Market.all
-    @summary = calculate_summary(@collections)
+    @summary = calculate_summary(@past_collections)
   end
 
   def new

@@ -1,0 +1,71 @@
+<% content_for :page_title, "계정 잠금 해제" %>
+
+<div class="container mx-auto max-w-md p-6">
+  <div class="space-y-8">
+    <!-- Header -->
+    <div class="space-y-2 text-center">
+      <h1 class="text-3xl font-bold tracking-tight text-foreground">계정 잠금 해제</h1>
+      <p class="text-sm text-muted-foreground">계정이 잠겼을 때 해제 방법을 안내해드립니다</p>
+    </div>
+
+    <!-- Main Form Card -->
+    <%= render 'shared/components/shadcn_card', classes: 'w-full' do %>
+      <div class="space-y-6">
+        <div class="space-y-2">
+          <h2 class="text-xl font-semibold text-foreground">잠금 해제 안내 요청</h2>
+          <p class="text-sm text-muted-foreground">잠긴 계정을 해제하기 위한 안내를 이메일로 보내드립니다.</p>
+        </div>
+        
+        <%= form_for(resource, as: resource_name, url: unlock_path(resource_name), html: { method: :post, class: "space-y-4" }) do |f| %>
+          <%= render "devise/shared/error_messages", resource: resource %>
+
+          <!-- Email Field -->
+          <%= render 'shared/components/shadcn_form_input', 
+              form: f, 
+              field: :email, 
+              label: '이메일 주소', 
+              type: 'email',
+              required: true,
+              description: '잠긴 계정의 이메일 주소를 입력하세요' %>
+
+          <!-- Submit Button -->
+          <div class="pt-4">
+            <%= render 'shared/components/shadcn_button', variant: 'default', classes: 'w-full' do %>
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/>
+              </svg>
+              잠금 해제 안내 받기
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <!-- Info Card -->
+    <%= render 'shared/components/shadcn_card', classes: 'w-full bg-orange-50/50 border-orange-200' do %>
+      <div class="space-y-4">
+        <div class="flex items-center space-x-3">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-sm font-medium text-orange-900">계정 잠금 안내</h3>
+          </div>
+        </div>
+        
+        <div class="text-sm text-orange-800 space-y-2">
+          <p>• 잘못된 비밀번호를 여러 번 입력하면 계정이 잠길 수 있습니다</p>
+          <p>• 이메일로 발송되는 링크를 클릭하여 계정을 잠금 해제할 수 있습니다</p>
+          <p>• 문제가 지속되면 관리자에게 문의하세요</p>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Links -->
+    <div class="text-center">
+      <%= render "devise/shared/links" %>
+    </div>
+  </div>
+</div>

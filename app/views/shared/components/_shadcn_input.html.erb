@@ -1,0 +1,41 @@
+<%#
+  Enhanced Shadcn UI Input Component
+  Usage: render 'shared/components/shadcn_input', field: form.text_field(:name), label: 'Name', required: true
+%>
+<% 
+  required ||= false
+  error ||= false
+  description ||= nil
+  classes ||= ''
+  
+  base_classes = "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+  
+  error_classes = error ? "border-destructive focus-visible:ring-destructive" : ""
+  
+  all_classes = "#{base_classes} #{error_classes} #{classes}"
+%>
+
+<div class="grid w-full gap-1.5">
+  <% if defined?(label) && label %>
+    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+      <%= label %>
+      <% if required %>
+        <span class="text-destructive">*</span>
+      <% end %>
+    </label>
+  <% end %>
+  
+  <% if defined?(field) && field %>
+    <%= field.gsub(/class="[^"]*"/, "class=\"#{all_classes}\"").html_safe %>
+  <% else %>
+    <input class="<%= all_classes %>" <%= yield %> />
+  <% end %>
+  
+  <% if description %>
+    <p class="text-sm text-muted-foreground"><%= description %></p>
+  <% end %>
+  
+  <% if error %>
+    <p class="text-sm text-destructive"><%= error %></p>
+  <% end %>
+</div>

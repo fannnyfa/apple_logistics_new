@@ -1,0 +1,15 @@
+<%#
+  Separator component inspired by Shadcn UI
+  Usage: render 'shared/components/separator'
+%>
+<% 
+  orientation ||= 'horizontal'
+  classes ||= ''
+  
+  base_classes = "shrink-0 bg-slate-200"
+  orientation_classes = orientation == 'horizontal' ? 'h-[1px] w-full' : 'h-full w-[1px]'
+  
+  all_classes = "#{base_classes} #{orientation_classes} #{classes}"
+%>
+
+<div class="<%= all_classes %>" role="separator" aria-orientation="<%= orientation %>"></div>

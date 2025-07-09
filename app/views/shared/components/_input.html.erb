@@ -1,0 +1,41 @@
+<%#
+  Input component inspired by Shadcn UI
+  Usage: render 'shared/components/input', field: form.text_field(:name), label: 'Name', required: true
+%>
+<% 
+  required ||= false
+  error ||= false
+  hint ||= nil
+  classes ||= ''
+  
+  base_classes = "flex h-10 w-full rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 ring-offset-white dark:ring-offset-slate-900 file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 dark:placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 dark:focus-visible:ring-slate-300 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+  
+  error_classes = error ? "border-red-500 focus-visible:ring-red-500" : ""
+  
+  all_classes = "#{base_classes} #{error_classes} #{classes}"
+%>
+
+<div class="space-y-2">
+  <% if defined?(label) && label %>
+    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-slate-900 dark:text-slate-100">
+      <%= label %>
+      <% if required %>
+        <span class="text-red-500">*</span>
+      <% end %>
+    </label>
+  <% end %>
+  
+  <% if defined?(field) && field %>
+    <%= field.gsub(/class="[^"]*"/, "class=\"#{all_classes}\"").html_safe %>
+  <% else %>
+    <input class="<%= all_classes %>" <%= yield %> />
+  <% end %>
+  
+  <% if hint %>
+    <p class="text-sm text-slate-500 dark:text-slate-400"><%= hint %></p>
+  <% end %>
+  
+  <% if error %>
+    <p class="text-sm text-red-500 dark:text-red-400"><%= error %></p>
+  <% end %>
+</div>

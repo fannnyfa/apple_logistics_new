@@ -1,0 +1,59 @@
+<%#
+  Enhanced Shadcn UI Form Input Component
+  Usage: render 'shared/components/shadcn_form_input', form: form, field: :email, label: 'Email', type: 'email', required: true
+%>
+<% 
+  form ||= nil
+  field ||= :text
+  label ||= nil
+  type ||= 'text'
+  placeholder ||= nil
+  required ||= false
+  classes ||= ''
+  description ||= nil
+  
+  input_classes = "flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-400"
+  
+  label_classes = "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-900 dark:text-gray-100"
+  
+  error_classes = "text-sm font-medium text-red-600 dark:text-red-400"
+  
+  description_classes = "text-sm text-gray-600 dark:text-gray-400"
+  
+  all_classes = "#{input_classes} #{classes}"
+%>
+
+<div class="space-y-2">
+  <% if label %>
+    <label class="<%= label_classes %>" for="<%= field %>">
+      <%= label %><%= required ? ' *' : '' %>
+    </label>
+  <% end %>
+  
+  <% if form %>
+    <%= form.send(type == 'password' ? 'password_field' : 'text_field', field, 
+        class: all_classes, 
+        placeholder: placeholder,
+        required: required,
+        id: field,
+        autocomplete: type == 'password' ? 'current-password' : nil) %>
+  <% else %>
+    <%= text_field_tag field, nil, 
+        class: all_classes, 
+        placeholder: placeholder,
+        required: required,
+        type: type,
+        id: field,
+        autocomplete: type == 'password' ? 'current-password' : nil %>
+  <% end %>
+  
+  <% if description %>
+    <p class="<%= description_classes %>"><%= description %></p>
+  <% end %>
+  
+  <% if form && form.object.errors[field].present? %>
+    <p class="<%= error_classes %>">
+      <%= form.object.errors[field].first %>
+    </p>
+  <% end %>
+</div>

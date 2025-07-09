@@ -1,16 +1,24 @@
-<div class="container mx-auto px-4 py-6">
-  <div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold text-gray-800">오늘의 수거 접수 현황</h1>
-    <div class="space-x-2">
-      <%= link_to "지난 접수", history_collections_path, class: "bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" %>
-      <%= link_to "새 접수", new_collection_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+<% content_for :page_title, "수거 접수 현황" %>
+
+<div class="p-6 space-y-6">
+  <!-- Header Section -->
+  <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+    <div class="space-y-1">
+      <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">수거 접수 현황</h1>
+      <p class="text-sm text-gray-600 dark:text-gray-400">오늘의 수거 접수 현황을 확인하세요</p>
+    </div>
+    <div class="flex items-center justify-end gap-x-2">
+      <%= link_to "지난 접수", history_collections_path, class: "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-300 bg-white hover:bg-gray-50 hover:text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-gray-100 h-10 px-4 py-2" %>
+      <%= link_to "새 접수", new_collection_path, class: "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-blue-600 text-white hover:bg-blue-700 shadow h-10 px-4 py-2" %>
     </div>
   </div>
 
   <!-- 날짜 표시 -->
-  <div class="mb-6">
-    <h2 class="text-xl font-bold mb-4 text-gray-800 flex items-center gap-2">
-      📅
+  <div class="space-y-1">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+      <svg class="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+      </svg>
       <%= @selected_date.strftime("%Y년 %m월 %d일") %> 
       <% if params[:status] == 'in_progress' %>
         접수 현황
@@ -23,89 +31,144 @@
   </div>
 
   <!-- 요약 정보 -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
     <%= link_to collections_path, class: "block" do %>
-      <div class="bg-white border border-gray-200 p-4 rounded-md hover:bg-gray-50 transition-colors cursor-pointer">
-        <h3 class="font-semibold text-black">전체</h3>
-        <p class="text-2xl font-bold text-black"><%= @summary[:in_progress_count] + @summary[:completed_count] %>건</p>
+      <div class="rounded-xl border border-gray-200 shadow-sm bg-white hover:shadow-md transition-all duration-200 cursor-pointer hover:border-gray-300 dark:border-gray-800 dark:bg-gray-900">
+        <div class="p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">전체</h3>
+              <p class="text-2xl font-bold text-gray-900 dark:text-gray-100"><%= @summary[:in_progress_count] + @summary[:completed_count] %>건</p>
+            </div>
+            <div class="p-2 bg-gray-100 rounded-lg dark:bg-gray-800">
+              <svg class="w-6 h-6 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v6a2 2 0 002 2h6a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+              </svg>
+            </div>
+          </div>
+        </div>
       </div>
     <% end %>
     <%= link_to collections_path(status: 'in_progress'), class: "block" do %>
-      <div class="bg-white border border-gray-200 p-4 rounded-md hover:bg-gray-50 transition-colors cursor-pointer">
-        <h3 class="font-semibold text-blue-800">접수</h3>
-        <p class="text-2xl font-bold text-blue-600"><%= @summary[:in_progress_count] %>건</p>
+      <div class="rounded-xl border border-gray-200 shadow-sm bg-white hover:shadow-md transition-all duration-200 cursor-pointer hover:border-blue-300 dark:border-gray-800 dark:bg-gray-900">
+        <div class="p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-xl font-semibold text-blue-900 dark:text-blue-400">접수</h3>
+              <p class="text-2xl font-bold text-blue-600 dark:text-blue-400"><%= @summary[:in_progress_count] %>건</p>
+            </div>
+            <div class="p-2 bg-blue-100 rounded-lg dark:bg-blue-900/20">
+              <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
       </div>
     <% end %>
     <%= link_to collections_path(status: 'completed'), class: "block" do %>
-      <div class="bg-white border border-gray-200 p-4 rounded-md hover:bg-gray-50 transition-colors cursor-pointer">
-        <h3 class="font-semibold text-green-800">수거완료</h3>
-        <p class="text-2xl font-bold text-green-600"><%= @summary[:completed_count] %>건</p>
+      <div class="rounded-xl border border-gray-200 shadow-sm bg-white hover:shadow-md transition-all duration-200 cursor-pointer hover:border-green-300 dark:border-gray-800 dark:bg-gray-900">
+        <div class="p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-xl font-semibold text-green-900 dark:text-green-400">수거완료</h3>
+              <p class="text-2xl font-bold text-green-600 dark:text-green-400"><%= @summary[:completed_count] %>건</p>
+            </div>
+            <div class="p-2 bg-green-100 rounded-lg dark:bg-green-900/20">
+              <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
       </div>
     <% end %>
   </div>
 
-  <!-- 📦 오늘 접수 물량 -->
-  <div class="mb-6">
-    <h2 class="text-xl font-bold mb-4 text-gray-800">📦 오늘 접수 물량</h2>
+  <!-- 물량 정보 -->
+  <div class="space-y-6">
+    <div class="space-y-1">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+        <svg class="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/>
+        </svg>
+        오늘 접수 물량
+      </h2>
+    </div>
     
     <!-- 전체 물량 카드 -->
-    <div class="bg-white border-2 border-blue-200 rounded-xl p-6 mb-6 shadow-sm">
-      <div>
-        <h3 class="text-lg font-semibold text-blue-800">전체 물량</h3>
-        <p class="text-3xl font-bold text-blue-600 mt-1"><%= @summary[:total_quantity] %></p>
+    <div class="rounded-xl border border-blue-200 shadow-sm bg-blue-50/50 dark:border-blue-800 dark:bg-blue-950/50">
+      <div class="p-6">
+        <div class="text-center">
+          <h3 class="text-xl font-semibold text-blue-900 dark:text-blue-400">전체 물량</h3>
+          <p class="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-1"><%= @summary[:total_quantity] %></p>
+        </div>
       </div>
     </div>
     
     <!-- 공판장별 물량 카드 -->
-    <div class="bg-white border-2 border-gray-200 rounded-xl p-6 shadow-sm">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">공판장별 물량</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <% @summary[:by_market].each do |market_id, quantity| %>
-          <% market = @markets.find(market_id) %>
-          <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-            <h4 class="font-medium text-gray-800"><%= market.name %></h4>
-            <p class="text-xl font-bold text-gray-700 mt-1"><%= quantity %></p>
-            <span class="text-sm text-gray-500"><%= market.district %></span>
+    <div class="rounded-xl border border-gray-200 shadow-sm bg-white dark:border-gray-800 dark:bg-gray-900">
+      <div class="p-6">
+        <div class="space-y-4">
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">공판장별 물량</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <% @summary[:by_market].each do |market_id, quantity| %>
+              <% market = @markets.find(market_id) %>
+              <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                <h4 class="text-xl font-semibold text-gray-900 dark:text-gray-100"><%= market.name %></h4>
+                <p class="text-xl font-bold text-gray-700 dark:text-gray-300 mt-1"><%= quantity %></p>
+                <span class="text-sm text-gray-600 dark:text-gray-400"><%= market.district %></span>
+              </div>
+            <% end %>
           </div>
-        <% end %>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- 수거 목록 -->
-  <div class="bg-white shadow rounded-lg overflow-hidden">
-    <!-- 데스크톱 테이블 -->
-    <div class="hidden md:block">
-      <table class="min-w-full">
-        <thead class="bg-gray-50">
-          <tr>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">농장명</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">수량</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">공판장</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">접수일시</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">상태</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">액션</th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          <% @collections.each do |collection| %>
-            <%= render 'collection_row', collection: collection %>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
+  <div class="space-y-4">
+    <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">수거 목록</h3>
+    
+    <div class="rounded-xl border border-gray-200 shadow-sm bg-white dark:border-gray-800 dark:bg-gray-900 p-0">
+      <!-- 데스크톱 테이블 -->
+      <div class="hidden md:block">
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-gray-50 dark:bg-gray-800">
+              <tr class="border-b border-gray-200 dark:border-gray-700">
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">농장명</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">수량</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">공판장</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">접수일시</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">상태</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">액션</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+              <% @collections.each do |collection| %>
+                <%= render 'collection_row', collection: collection %>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-    <!-- 모바일 카드 뷰 -->
-    <div class="md:hidden">
-      <% @collections.each do |collection| %>
-        <%= render 'collection_card', collection: collection %>
+      <!-- 모바일 카드 뷰 -->
+      <div class="md:hidden">
+        <% @collections.each do |collection| %>
+          <%= render 'collection_card', collection: collection %>
+        <% end %>
+      </div>
+      
+      <% if @collections.empty? %>
+        <div class="text-center py-12 text-gray-500 dark:text-gray-400">
+          <svg class="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          <p class="text-lg font-medium">선택한 날짜에 수거 접수가 없습니다.</p>
+        </div>
       <% end %>
     </div>
-    
-    <% if @collections.empty? %>
-      <div class="text-center py-8 text-gray-500">
-        선택한 날짜에 수거 접수가 없습니다.
-      </div>
-    <% end %>
   </div>
 </div>

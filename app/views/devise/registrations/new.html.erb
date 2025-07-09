@@ -1,0 +1,75 @@
+<div class="min-h-screen flex items-center justify-center bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full space-y-8">
+    <!-- Header -->
+    <div class="text-center">
+      <div class="flex justify-center mb-6">
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-slate-900">
+          <svg class="h-7 w-7 text-white" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+      </div>
+      <h2 class="text-3xl font-bold tracking-tight text-slate-900">
+        회원가입
+      </h2>
+      <p class="mt-2 text-sm text-slate-600">
+        새 계정을 만들어 시스템을 이용하세요
+      </p>
+    </div>
+    
+    <!-- Form Card -->
+    <%= render 'shared/components/card' do %>
+      <%= render 'shared/components/form' do %>
+        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "space-y-6" }) do |f| %>
+          <!-- Error Messages -->
+          <% if resource.errors.any? %>
+            <%= render 'shared/components/alert', variant: 'destructive', title: '입력 오류가 발생했습니다' do %>
+              <ul class="mt-2 text-sm list-disc list-inside">
+                <% resource.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            <% end %>
+          <% end %>
+
+          <!-- Email Field -->
+          <%= render 'shared/components/input', 
+              field: f.email_field(:email, 
+                       autofocus: true, 
+                       autocomplete: "email",
+                       placeholder: "이메일을 입력하세요"),
+              label: "이메일 주소",
+              required: true %>
+
+          <!-- Password Field -->
+          <%= render 'shared/components/input', 
+              field: f.password_field(:password, 
+                       autocomplete: "new-password",
+                       placeholder: "비밀번호를 입력하세요"),
+              label: "비밀번호",
+              hint: @minimum_password_length ? "최소 #{@minimum_password_length}자 이상" : nil,
+              required: true %>
+
+          <!-- Password Confirmation Field -->
+          <%= render 'shared/components/input', 
+              field: f.password_field(:password_confirmation, 
+                       autocomplete: "new-password",
+                       placeholder: "비밀번호를 다시 입력하세요"),
+              label: "비밀번호 확인",
+              required: true %>
+
+          <!-- Submit Button -->
+          <div>
+            <%= f.submit "회원가입", class: "w-full inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-900 text-slate-50 hover:bg-slate-800 shadow-sm h-10 px-4 py-2 cursor-pointer" %>
+          </div>
+        <% end %>
+
+        <%= render 'shared/components/separator' %>
+
+        <div class="text-center">
+          <%= render "devise/shared/links" %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

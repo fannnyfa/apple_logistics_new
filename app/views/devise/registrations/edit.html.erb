@@ -1,0 +1,140 @@
+<% content_for :page_title, "계정 설정" %>
+
+<div class="container mx-auto max-w-md p-6">
+  <div class="space-y-8">
+    <!-- Header -->
+    <div class="space-y-2 text-center">
+      <h1 class="text-3xl font-bold tracking-tight text-foreground">계정 설정</h1>
+      <p class="text-sm text-muted-foreground">계정 정보를 수정하거나 비밀번호를 변경할 수 있습니다.</p>
+    </div>
+
+    <!-- Main Form Card -->
+    <%= render 'shared/components/shadcn_card', classes: 'w-full' do %>
+      <div class="space-y-6">
+        <div class="space-y-2">
+          <h2 class="text-xl font-semibold text-foreground">계정 정보 수정</h2>
+          <p class="text-sm text-muted-foreground">이메일 주소 및 비밀번호를 변경할 수 있습니다.</p>
+        </div>
+        
+        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, class: "space-y-4" }) do |f| %>
+          <%= render "devise/shared/error_messages", resource: resource %>
+
+          <!-- Email Field -->
+          <%= render 'shared/components/shadcn_form_input', 
+              form: f, 
+              field: :email, 
+              label: '이메일', 
+              type: 'email', 
+              required: true %>
+
+          <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+            <div class="p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div class="ml-3">
+                  <p class="text-sm font-medium text-yellow-800">
+                    확인 대기 중: <%= resource.unconfirmed_email %>
+                  </p>
+                  <p class="text-sm text-yellow-700">새 이메일 주소 확인을 위해 이메일을 확인해주세요.</p>
+                </div>
+              </div>
+            </div>
+          <% end %>
+
+          <!-- Password Fields -->
+          <div class="space-y-4">
+            <div class="border-t pt-4">
+              <h3 class="text-lg font-medium text-foreground mb-2">비밀번호 변경</h3>
+              <p class="text-sm text-muted-foreground mb-4">비밀번호를 변경하지 않으려면 아래 필드를 비워두세요.</p>
+            </div>
+
+            <%= render 'shared/components/shadcn_form_input', 
+                form: f, 
+                field: :password, 
+                label: '새 비밀번호', 
+                type: 'password',
+                description: @minimum_password_length ? "최소 #{@minimum_password_length}자 이상" : nil,
+                placeholder: '비밀번호를 변경하지 않으려면 비워두세요' %>
+
+            <%= render 'shared/components/shadcn_form_input', 
+                form: f, 
+                field: :password_confirmation, 
+                label: '새 비밀번호 확인', 
+                type: 'password',
+                placeholder: '새 비밀번호를 다시 입력하세요' %>
+
+            <%= render 'shared/components/shadcn_form_input', 
+                form: f, 
+                field: :current_password, 
+                label: '현재 비밀번호', 
+                type: 'password',
+                required: true,
+                description: '변경 사항을 저장하려면 현재 비밀번호를 입력해주세요' %>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="pt-4">
+            <%= render 'shared/components/shadcn_button', variant: 'default', classes: 'w-full' do %>
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              변경 사항 저장
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <!-- Account Deletion Card -->
+    <%= render 'shared/components/shadcn_card', classes: 'w-full border-destructive/50' do %>
+      <div class="space-y-4">
+        <div class="space-y-2">
+          <h2 class="text-xl font-semibold text-destructive">계정 삭제</h2>
+          <p class="text-sm text-muted-foreground">계정을 삭제하면 모든 데이터가 영구적으로 삭제됩니다.</p>
+        </div>
+        
+        <div class="bg-destructive/10 p-4 rounded-lg">
+          <div class="flex items-start space-x-3">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-destructive" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="space-y-3">
+              <p class="text-sm font-medium text-destructive">주의: 이 작업은 되돌릴 수 없습니다.</p>
+              <p class="text-sm text-muted-foreground">계정을 삭제하면 모든 데이터, 설정, 접수 내역이 영구적으로 삭제됩니다.</p>
+              
+              <%= button_to registration_path(resource_name), 
+                  data: { 
+                    confirm: "정말로 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.", 
+                    turbo_confirm: "정말로 계정을 삭제하시겠습니까?" 
+                  }, 
+                  method: :delete,
+                  class: "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 py-2" do %>
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+                계정 삭제
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Back Link -->
+    <div class="text-center">
+      <%= link_to "대시보드로 돌아가기", :back, 
+          class: "inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors" do %>
+        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        돌아가기
+      <% end %>
+    </div>
+  </div>
+</div>

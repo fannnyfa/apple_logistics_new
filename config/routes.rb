@@ -1,5 +1,15 @@
 Rails.application.routes.draw do
-  root "collections#index"
+  devise_for :users
+  
+  root "dashboard#index"
+  
+  namespace :admin do
+    resources :users, only: [:index] do
+      member do
+        patch :toggle_approved
+      end
+    end
+  end
   
   resources :collections do
     collection do

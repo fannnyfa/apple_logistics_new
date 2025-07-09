@@ -1,0 +1,71 @@
+<% content_for :page_title, "이메일 인증" %>
+
+<div class="container mx-auto max-w-md p-6">
+  <div class="space-y-8">
+    <!-- Header -->
+    <div class="space-y-2 text-center">
+      <h1 class="text-3xl font-bold tracking-tight text-foreground">이메일 인증</h1>
+      <p class="text-sm text-muted-foreground">계정 인증을 위해 이메일 확인이 필요합니다</p>
+    </div>
+
+    <!-- Main Form Card -->
+    <%= render 'shared/components/shadcn_card', classes: 'w-full' do %>
+      <div class="space-y-6">
+        <div class="space-y-2">
+          <h2 class="text-xl font-semibold text-foreground">인증 이메일 재발송</h2>
+          <p class="text-sm text-muted-foreground">인증 이메일을 받지 못하셨다면 다시 보내드리겠습니다.</p>
+        </div>
+        
+        <%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post, class: "space-y-4" }) do |f| %>
+          <%= render "devise/shared/error_messages", resource: resource %>
+
+          <!-- Email Field -->
+          <%= render 'shared/components/shadcn_form_input', 
+              form: f, 
+              field: :email, 
+              label: '이메일 주소', 
+              type: 'email',
+              required: true,
+              description: '가입할 때 사용한 이메일 주소를 입력하세요' %>
+
+          <!-- Submit Button -->
+          <div class="pt-4">
+            <%= render 'shared/components/shadcn_button', variant: 'default', classes: 'w-full' do %>
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+              인증 이메일 다시 보내기
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <!-- Info Card -->
+    <%= render 'shared/components/shadcn_card', classes: 'w-full bg-green-50/50 border-green-200' do %>
+      <div class="space-y-4">
+        <div class="flex items-center space-x-3">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-sm font-medium text-green-900">이메일 인증 안내</h3>
+          </div>
+        </div>
+        
+        <div class="text-sm text-green-800 space-y-2">
+          <p>• 가입 시 입력한 이메일 주소로 인증 링크가 발송됩니다</p>
+          <p>• 이메일이 오지 않았다면 스팸 폴더를 확인해주세요</p>
+          <p>• 인증 완료 후 모든 기능을 사용할 수 있습니다</p>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Links -->
+    <div class="text-center">
+      <%= render "devise/shared/links" %>
+    </div>
+  </div>
+</div>
