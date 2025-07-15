@@ -1,0 +1,100 @@
+<% @collections_by_market.each do |market, collections| %>
+  <div class="invoice-page-a4">
+    <!-- 상단 헤더 -->
+    <div class="header-a4">
+      <div class="date-left">
+        <span>출하일시 : <%= @selected_date.strftime('%Y년 %m월 %d일') %></span>
+      </div>
+      <div class="title-center-a4">
+        <h1>송 품 장</h1>
+      </div>
+      <div class="branch-right">
+        <span>밀양산내지소</span>
+      </div>
+    </div>
+    
+    <!-- 수신자 정보 -->
+    <div class="receiver-a4">
+      <span>수신: (<%= market.name %>) 귀하</span>
+    </div>
+    
+    <!-- 메인 테이블 -->
+    <table class="main-table-a4">
+      <thead>
+        <tr>
+          <th>생산자</th>
+          <th>품명</th>
+          <th>규격</th>
+          <th>계</th>
+          <th>생산자</th>
+          <th>품명</th>
+          <th>규격</th>
+          <th>계</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% collections.each_with_index do |collection, index| %>
+          <% if index % 2 == 0 %>
+            <tr>
+              <td><%= collection.farm_name %></td>
+              <td>예산</td>
+              <td><%= collection.weight %></td>
+              <td><%= collection.quantity || 0 %></td>
+              <% next_collection = collections[index + 1] %>
+              <% if next_collection %>
+                <td><%= next_collection.farm_name %></td>
+                <td>예산</td>
+                <td><%= next_collection.weight %></td>
+                <td><%= next_collection.quantity || 0 %></td>
+              <% else %>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              <% end %>
+            </tr>
+          <% end %>
+        <% end %>
+        
+        <!-- 빈 행들 추가 (총 25행 확보) -->
+        <% total_data_rows = (collections.count + 1) / 2 %>
+        <% (total_data_rows...25).each do %>
+          <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    
+    <!-- 하단 정보 -->
+    <div class="footer-a4">
+      <div class="account-info-a4">
+        계좌번호: 농협 356-0724-8964-13 (강민준)
+      </div>
+      <div class="driver-info-a4">
+        강 민 준 기사
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<% if @collections_by_market.empty? %>
+  <div class="invoice-page">
+    <div class="header-section">
+      <div class="header-center">
+        <h1 class="main-title">송 품 장</h1>
+      </div>
+    </div>
+    
+    <div style="text-align: center; padding: 100px; font-size: 18px; color: #666;">
+      해당 날짜에 수거 완료된 기록이 없습니다.
+    </div>
+  </div>
+<% end %>

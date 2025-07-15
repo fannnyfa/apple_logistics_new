@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>송품장 출력</title>
+  
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 30px;
+      background-color: white;
+      line-height: 1.4;
+    }
+    
+    /* A4 인쇄용 송품장 스타일 */
+    .invoice-page-a4 {
+      page-break-after: always;
+      margin: 0;
+      padding: 30px;
+      width: 100%;
+      font-family: sans-serif;
+      background-color: white;
+    }
+    
+    .invoice-page-a4:last-child {
+      page-break-after: avoid;
+    }
+    
+    /* 헤더 섹션 */
+    .header-a4 {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 30px;
+      position: relative;
+    }
+    
+    .date-left {
+      flex: 1;
+      font-size: 14px;
+    }
+    
+    .title-center-a4 {
+      flex: 1;
+      text-align: center;
+    }
+    
+    .title-center-a4 h1 {
+      font-size: 32px;
+      font-weight: bold;
+      margin: 0;
+      letter-spacing: 8px;
+    }
+    
+    .branch-right {
+      flex: 1;
+      text-align: right;
+      font-size: 14px;
+    }
+    
+    /* 수신자 정보 */
+    .receiver-a4 {
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+    
+    /* 메인 테이블 */
+    .main-table-a4 {
+      width: 100% !important;
+      border-collapse: collapse !important;
+      margin: 20px 0 !important;
+      font-size: 14px !important;
+    }
+    
+    .main-table-a4 th {
+      border: 1px solid black !important;
+      padding: 12px 8px !important;
+      text-align: center !important;
+      vertical-align: middle !important;
+      font-weight: bold !important;
+      height: 40px !important;
+      width: 12.5% !important;
+    }
+    
+    .main-table-a4 td {
+      border: 1px solid black !important;
+      padding: 10px 8px !important;
+      text-align: center !important;
+      vertical-align: middle !important;
+      height: 35px !important;
+      width: 12.5% !important;
+    }
+    
+    /* 하단 정보 */
+    .footer-a4 {
+      margin-top: 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .account-info-a4 {
+      font-size: 14px;
+    }
+    
+    .driver-info-a4 {
+      font-size: 16px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <%= yield %>
+</body>
+</html>
