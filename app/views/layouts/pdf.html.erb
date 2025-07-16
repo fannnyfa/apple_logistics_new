@@ -5,10 +5,15 @@
   <title>송품장 출력</title>
   
   <style>
+    @page {
+      size: A4;
+      margin: 10mm;
+    }
+    
     body {
       font-family: sans-serif;
       margin: 0;
-      padding: 30px;
+      padding: 0;
       background-color: white;
       line-height: 1.4;
     }
@@ -16,11 +21,14 @@
     /* A4 인쇄용 송품장 스타일 */
     .invoice-page-a4 {
       page-break-after: always;
+      page-break-inside: avoid;
       margin: 0;
-      padding: 30px;
+      padding: 20px;
       width: 100%;
       font-family: sans-serif;
       background-color: white;
+      position: relative;
+      min-height: 1100px;
     }
     
     .invoice-page-a4:last-child {
@@ -32,13 +40,17 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       position: relative;
     }
     
     .date-left {
       flex: 1;
-      font-size: 14px;
+      font-size: 13px;
+    }
+    
+    .date-left p {
+      margin: 0;
     }
     
     .title-center-a4 {
@@ -47,66 +59,82 @@
     }
     
     .title-center-a4 h1 {
-      font-size: 32px;
+      font-size: 20px;
       font-weight: bold;
-      margin: 0;
-      letter-spacing: 8px;
+      margin: 10px 0;
+      letter-spacing: 6px;
     }
     
     .branch-right {
       flex: 1;
       text-align: right;
-      font-size: 14px;
+      font-size: 13px;
+    }
+    
+    .branch-right p {
+      margin: 0;
     }
     
     /* 수신자 정보 */
     .receiver-a4 {
-      margin-bottom: 20px;
-      font-size: 16px;
+      margin-bottom: 10px;
+      font-size: 13px;
+    }
+    
+    .receiver-a4 p {
+      margin: 0;
     }
     
     /* 메인 테이블 */
     .main-table-a4 {
-      width: 100% !important;
-      border-collapse: collapse !important;
-      margin: 20px 0 !important;
-      font-size: 14px !important;
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 13px;
+    }
+    
+    .main-table-a4 th, .main-table-a4 td {
+      border: 1px solid #000;
+      padding: 6px;
+      text-align: center;
+      vertical-align: middle;
     }
     
     .main-table-a4 th {
-      border: 1px solid black !important;
-      padding: 12px 8px !important;
-      text-align: center !important;
-      vertical-align: middle !important;
-      font-weight: bold !important;
-      height: 40px !important;
-      width: 12.5% !important;
+      font-weight: bold;
+      height: 30px;
+      width: 12.5%;
     }
     
     .main-table-a4 td {
-      border: 1px solid black !important;
-      padding: 10px 8px !important;
-      text-align: center !important;
-      vertical-align: middle !important;
-      height: 35px !important;
-      width: 12.5% !important;
+      height: 28px;
+      width: 12.5%;
+    }
+    
+    .main-table-a4 tr {
+      page-break-inside: avoid;
     }
     
     /* 하단 정보 */
     .footer-a4 {
-      margin-top: 40px;
+      position: absolute;
+      bottom: 30px;
+      left: 20px;
+      right: 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
     
     .account-info-a4 {
-      font-size: 14px;
+      font-size: 13px;
+      font-weight: bold;
     }
     
     .driver-info-a4 {
-      font-size: 16px;
+      font-size: 13px;
       font-weight: bold;
+      text-align: right;
     }
   </style>
 </head>

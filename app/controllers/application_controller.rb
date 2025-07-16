@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
     elsif resource.approved?
       collections_path
     else
-      authenticated_root_path
+      root_path
     end
   end
 end

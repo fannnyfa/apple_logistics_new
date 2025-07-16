@@ -37,6 +37,26 @@ class CollectionsController < ApplicationController
     @summary = calculate_summary(@past_collections)
   end
 
+  def invoice
+    @date = Date.parse(params[:date])
+    @collections_by_market = Collection.includes(:market)
+                                      .where(scheduled_at: @date.beginning_of_day..@date.end_of_day)
+                                      .group_by(&:market)
+
+    respond_to do |format|
+      format.html # for 웹 확인용
+      format.pdf do
+        render pdf: "invoice_#{@date}",
+               template: "collections/invoice",
+               layout: false,
+               page_size: 'A4',
+               encoding: 'UTF-8',
+               print_media_type: true,
+               margin: { top: 10, bottom: 10, left: 10, right: 10 }
+      end
+    end
+  end
+
   def new
     @collection = Collection.new
     @markets = Market.all
@@ -113,7 +133,7 @@ class CollectionsController < ApplicationController
   end
 
   def collection_params
-    params.require(:collection).permit(:farm_name, :quantity, :market_id, :receiver, :scheduled_at)
+    params.require(:collection).permit(:farm_name, :product_name, :quantity, :weight, :market_id, :receiver, :scheduled_at)
   end
 
   def calculate_summary(collections)

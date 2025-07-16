@@ -5,10 +5,10 @@ WickedPdf.config = {
   # 기본 PDF 옵션
   page_size: 'A4',
   margin: {
-    top: '0.75in',
-    bottom: '0.75in',
-    left: '0.75in',
-    right: '0.75in'
+    top: '10mm',
+    bottom: '10mm',
+    left: '10mm',
+    right: '10mm'
   },
   
   # 한글 폰트 지원
@@ -18,6 +18,10 @@ WickedPdf.config = {
   # 웹 폰트 로딩 대기
   javascript_delay: 1000,
   no_stop_slow_scripts: true,
+  
+  # 출력 품질 향상
+  dpi: 300,
+  zoom: 1.0,
   
   # 디버깅 (개발 환경에서만)
   show_as_html: Rails.env.development?

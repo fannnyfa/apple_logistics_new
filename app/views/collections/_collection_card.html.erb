@@ -2,7 +2,8 @@
   <div class="flex justify-between items-start mb-3">
     <h3 class="text-lg font-semibold text-slate-900"><%= collection.farm_name %></h3>
     <% if collection.in_progress? %>
-      <%= render 'shared/components/badge', variant: 'info' do %>
+      <%= render 'shared/components/badge', variant: 'info', classes: '', 
+                 style: 'background-color: #2563eb;' do %>
         접수완료
       <% end %>
     <% elsif collection.completed? %>
@@ -17,24 +18,27 @@
   </div>
   
   <div class="text-sm text-slate-600 space-y-1 mb-4">
+    <div><span class="font-medium">품명:</span> <span class="text-base font-semibold text-slate-900"><%= collection.product_name || "사과" %></span></div>
     <div><span class="font-medium">수량:</span> <span class="text-base font-semibold text-slate-900"><%= collection.quantity %></span></div>
+    <div><span class="font-medium">무게:</span> <span class="text-base font-semibold text-slate-900"><%= collection.weight || "10kg" %></span></div>
     <div><span class="font-medium">공판장:</span> <%= collection.market.name %> (<%= collection.market.district %>)</div>
     <div><span class="font-medium">접수일자:</span> <%= collection.scheduled_at.strftime("%m/%d") %></div>
   </div>
   
-  <div class="flex flex-wrap gap-2">
+  <div class="flex gap-3">
     <% if collection.in_progress? %>
       <%= link_to "수거완료", update_status_collection_path(collection, status: 'completed'), 
           data: { "turbo-method": :patch },
-          class: "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-green-500 text-white hover:bg-green-600 shadow-sm h-8 px-3 text-xs" %>
+          class: "flex-1 inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-green-600 text-white hover:bg-green-700 shadow-sm h-10 px-4" %>
     <% elsif collection.completed? %>
       <%= link_to "되돌리기", revert_collection_path(collection), 
           data: { "turbo-method": :patch, "turbo-confirm": "접수 상태로 되돌리시겠습니까?" },
-          class: "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-yellow-500 text-white hover:bg-yellow-600 shadow-sm h-8 px-3 text-xs" %>
+          class: "flex-1 inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-white hover:bg-blue-700 shadow-sm h-10 px-4",
+          style: "background-color: #2563eb;" %>
     <% end %>
-    <%= link_to "수정", edit_collection_path(collection), class: "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-100 text-slate-900 hover:bg-slate-200 border border-slate-200 h-8 px-3 text-xs" %>
+    <%= link_to "수정", edit_collection_path(collection), class: "flex-1 inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-gray-900 hover:bg-gray-200 border border-gray-300 shadow-sm h-10 px-4" %>
     <%= link_to "삭제", collection_path(collection), 
         data: { "turbo-method": :delete, "turbo-confirm": "정말 삭제하시겠습니까?" }, 
-        class: "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-red-500 text-white hover:bg-red-600 shadow-sm h-8 px-3 text-xs" %>
+        class: "flex-1 inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-red-100 text-red-900 hover:bg-red-200 border border-red-300 shadow-sm h-10 px-4" %>
   </div>
 </div>

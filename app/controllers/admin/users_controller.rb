@@ -14,6 +14,6 @@ class Admin::UsersController < ApplicationController
   private
 
   def admin_only
-    redirect_to authenticated_root_path, alert: "관리자만 접근 가능합니다." unless current_user&.admin?
+    redirect_to root_path, alert: "관리자만 접근 가능합니다." unless current_user&.admin?
   end
 end

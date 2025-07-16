@@ -21,56 +21,216 @@
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
     
-    <script>
-      // Dark mode toggle functionality
-      function toggleDarkMode() {
-        const html = document.documentElement;
-        const isDark = html.classList.contains('dark');
-        
-        if (isDark) {
-          html.classList.remove('dark');
-          localStorage.setItem('darkMode', 'false');
-        } else {
-          html.classList.add('dark');
-          localStorage.setItem('darkMode', 'true');
+    <style>
+      /* Bottom tab bar styles for mobile only */
+      @media (max-width: 767px) {
+        .bottom-tab-bar {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 64px;
+          background: white;
+          border-top: 1px solid #e5e7eb;
+          box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+          z-index: 40;
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+          padding: 0 1rem;
         }
       }
       
-      // Initialize dark mode from localStorage
-      if (localStorage.getItem('darkMode') === 'true') {
-        document.documentElement.classList.add('dark');
+      /* Hide bottom tab bar on desktop */
+      @media (min-width: 768px) {
+        .bottom-tab-bar {
+          display: none;
+        }
       }
-    </script>
+      
+      /* Bottom tab item styles for mobile only */
+      @media (max-width: 767px) {
+        .bottom-tab-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 0.5rem;
+          min-width: 60px;
+          text-decoration: none;
+          color: #6b7280;
+          transition: color 0.2s ease;
+        }
+        
+        .bottom-tab-item.active {
+          color: #2563eb;
+        }
+        
+        .bottom-tab-item:hover {
+          color: #2563eb;
+        }
+        
+        .bottom-tab-item svg {
+          width: 24px;
+          height: 24px;
+          margin-bottom: 0.25rem;
+        }
+        
+        .bottom-tab-item span {
+          font-size: 0.75rem;
+          font-weight: 500;
+        }
+      }
+      
+      /* Add bottom padding to body when bottom tab bar is visible (mobile only) */
+      @media (max-width: 767px) {
+        body.has-bottom-tab {
+          padding-bottom: 64px;
+        }
+      }
+    </style>
   </head>
 
-  <body class="h-full bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 antialiased transition-colors duration-200">
-    <div class="min-h-full">
+  <body class="h-full bg-white text-gray-900 antialiased <%= 'has-bottom-tab' if user_signed_in? %>">
+    <% if user_signed_in? %>
+      <!-- Desktop Top Navigation Bar -->
+      <nav class="hidden md:flex bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50 h-16">
+        <div class="flex items-center justify-between w-full px-6">
+          <!-- Logo -->
+          <div class="flex items-center gap-3">
+            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 009.586 13H7"/>
+              </svg>
+            </div>
+            <span class="hidden md:block text-xl font-bold text-gray-800">농산물물류시스템</span>
+          </div>
+          
+          <!-- Desktop Navigation Menu -->
+          <div class="flex items-center space-x-6">
+            <%= link_to new_collection_path, 
+                class: "flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors #{'bg-gray-100 text-blue-600 font-semibold' if controller_name == 'collections' && action_name == 'new'} hover:bg-gray-50" do %>
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+              </svg>
+              <span>새접수</span>
+            <% end %>
+            
+            <%= link_to collections_path, 
+                class: "flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors #{'bg-gray-100 text-blue-600 font-semibold' if controller_name == 'collections' && action_name == 'index'} hover:bg-gray-50" do %>
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 009.586 13H7"/>
+              </svg>
+              <span>수거접수</span>
+            <% end %>
+            
+            <%= link_to history_collections_path, 
+                class: "flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors #{'bg-gray-100 text-blue-600 font-semibold' if controller_name == 'collections' && action_name == 'history'} hover:bg-gray-50" do %>
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span>접수기록</span>
+            <% end %>
+            
+            <%= link_to root_path(view: 'profile'), 
+                class: "flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors #{'bg-gray-100 text-blue-600 font-semibold' if current_page?(root_path) && params[:view] == 'profile'} hover:bg-gray-50" do %>
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+              </svg>
+              <span>내정보</span>
+            <% end %>
+            
+            <!-- User dropdown for logout -->
+            <div class="relative">
+              <%= button_to destroy_user_session_path, 
+                  method: :delete,
+                  class: "flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-50 transition-colors text-gray-700",
+                  data: { confirm: "로그아웃하시겠습니까?" } do %>
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                </svg>
+                <span>로그아웃</span>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Mobile Bottom Tab Bar -->
+      <nav class="md:hidden bottom-tab-bar">
+        <%= link_to new_collection_path, 
+            class: "bottom-tab-item #{'active' if controller_name == 'collections' && action_name == 'new'}" do %>
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+          </svg>
+          <span>새접수</span>
+        <% end %>
+        
+        <%= link_to collections_path, 
+            class: "bottom-tab-item #{'active' if controller_name == 'collections' && action_name == 'index'}" do %>
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 009.586 13H7"/>
+          </svg>
+          <span>수거접수</span>
+        <% end %>
+        
+        <%= link_to history_collections_path, 
+            class: "bottom-tab-item #{'active' if controller_name == 'collections' && action_name == 'history'}" do %>
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span>접수기록</span>
+        <% end %>
+        
+        <%= link_to root_path(view: 'profile'), 
+            class: "bottom-tab-item #{'active' if current_page?(root_path) && params[:view] == 'profile'}" do %>
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
+          <span>내정보</span>
+        <% end %>
+      </nav>
+    <% end %>
+
+    <!-- Main Content Area -->
+    <div class="md:pt-16">
       <% if user_signed_in? %>
-        <%= render 'shared/modern_navbar' %>
+        <!-- Mobile Header Area -->
+        <header class="md:hidden bg-white shadow-sm border-b border-gray-200">
+          <div class="px-4 sm:px-6">
+            <div class="flex items-center justify-center h-16">
+              <h1 class="text-lg font-semibold text-gray-900">
+                <%= content_for?(:page_title) ? content_for(:page_title) : "Apple Logistics" %>
+              </h1>
+            </div>
+          </div>
+        </header>
       <% end %>
       
-      <main class="<%= user_signed_in? ? 'lg:pl-64' : '' %>">
+      <!-- Main Content -->
+      <main class="<%= user_signed_in? ? 'bg-gray-50' : '' %>">
         <!-- Flash messages -->
         <% if notice %>
-          <div class="m-4">
+          <div class="p-4">
             <%= render 'shared/components/shadcn_alert', variant: 'success', title: '성공' do %>
               <%= notice %>
             <% end %>
           </div>
         <% end %>
         
-        <% if alert %>
-          <div class="m-4">
+        <% if alert && request.path != '/users/sign_in' %>
+          <div class="p-4">
             <%= render 'shared/components/shadcn_alert', variant: 'destructive', title: '오류' do %>
               <%= alert %>
             <% end %>
           </div>
         <% end %>
         
-        <div class="<%= user_signed_in? ? 'bg-gray-50 dark:bg-gray-800 min-h-screen' : '' %>">
+        <!-- Page Content -->
+        <div class="<%= user_signed_in? ? 'min-h-screen' : '' %>">
           <%= yield %>
         </div>
       </main>
     </div>
+    
   </body>
 </html>

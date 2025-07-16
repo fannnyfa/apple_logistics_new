@@ -19,13 +19,34 @@
         <% end %>
 
         <div>
-          <%= form.label :farm_name, "이름", class: "block text-sm font-medium text-gray-700" %>
+          <%= form.label :farm_name, "생산자", class: "block text-sm font-medium text-gray-700" %>
           <%= form.text_field :farm_name, class: "mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+        </div>
+
+        <div>
+          <%= form.label :product_name, "품명", class: "block text-sm font-medium text-gray-700" %>
+          <%= form.select :product_name, 
+              options_for_select([
+                ["사과", "사과"]
+              ], @collection.product_name || "사과"),
+              {},
+              { class: "mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" } %>
         </div>
 
         <div>
           <%= form.label :quantity, "수량", class: "block text-sm font-medium text-gray-700" %>
           <%= form.number_field :quantity, class: "mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+        </div>
+
+        <div>
+          <%= form.label :weight, "무게", class: "block text-sm font-medium text-gray-700" %>
+          <%= form.select :weight, 
+              options_for_select([
+                ["10kg", "10kg"],
+                ["5kg", "5kg"]
+              ], @collection.weight || "10kg"),
+              {},
+              { class: "mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" } %>
         </div>
 
         <div>

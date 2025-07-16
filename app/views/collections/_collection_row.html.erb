@@ -3,7 +3,13 @@
     <%= collection.farm_name %>
   </td>
   <td class="px-4 py-4 whitespace-nowrap text-sm text-slate-600">
+    <%= collection.product_name || "사과" %>
+  </td>
+  <td class="px-4 py-4 whitespace-nowrap text-sm text-slate-600">
     <%= collection.quantity %>
+  </td>
+  <td class="px-4 py-4 whitespace-nowrap text-sm text-slate-600">
+    <%= collection.weight || "10kg" %>
   </td>
   <td class="px-4 py-4 whitespace-nowrap text-sm text-slate-600">
     <%= collection.market.name %>
@@ -14,7 +20,8 @@
   </td>
   <td class="px-4 py-4 whitespace-nowrap">
     <% if collection.in_progress? %>
-      <%= render 'shared/components/badge', variant: 'info' do %>
+      <%= render 'shared/components/badge', variant: 'info', classes: '', 
+                 style: 'background-color: #2563eb;' do %>
         접수완료
       <% end %>
     <% elsif collection.completed? %>
@@ -28,20 +35,21 @@
     <% end %>
   </td>
   <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">
-    <div class="flex space-x-3">
+    <div class="flex space-x-2">
       <% if collection.in_progress? %>
         <%= link_to "수거완료", update_status_collection_path(collection, status: 'completed'), 
             data: { "turbo-method": :patch },
-            class: "text-green-600 hover:text-green-800 hover:underline underline-offset-4 transition-colors" %>
+            class: "inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors" %>
       <% elsif collection.completed? %>
         <%= link_to "되돌리기", revert_collection_path(collection), 
             data: { "turbo-method": :patch, "turbo-confirm": "접수 상태로 되돌리시겠습니까?" },
-            class: "text-yellow-600 hover:text-yellow-800 hover:underline underline-offset-4 transition-colors" %>
+            class: "inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors", 
+            style: "background-color: #2563eb;" %>
       <% end %>
-      <%= link_to "수정", edit_collection_path(collection), class: "text-slate-600 hover:text-slate-800 hover:underline underline-offset-4 transition-colors" %>
+      <%= link_to "수정", edit_collection_path(collection), class: "inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors" %>
       <%= link_to "삭제", collection_path(collection), 
           data: { "turbo-method": :delete, "turbo-confirm": "정말 삭제하시겠습니까?" }, 
-          class: "text-red-600 hover:text-red-800 hover:underline underline-offset-4 transition-colors" %>
+          class: "inline-flex items-center px-3 py-1.5 border border-red-300 text-xs font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors" %>
     </div>
   </td>
 </tr>

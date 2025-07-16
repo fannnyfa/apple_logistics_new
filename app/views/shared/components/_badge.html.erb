@@ -12,17 +12,17 @@
   when 'default'
     'border-transparent bg-slate-900 text-slate-50 hover:bg-slate-800'
   when 'secondary'
-    'border-transparent bg-slate-100 text-slate-900 hover:bg-slate-200'
+    'border-transparent bg-blue-600 text-white px-3 py-1 text-sm font-bold'
   when 'outline'
     'text-slate-950 border-slate-300'
   when 'destructive'
     'border-transparent bg-red-500 text-slate-50 hover:bg-red-600'
   when 'success'
-    'border-transparent bg-green-500 text-slate-50 hover:bg-green-600'
+    'border-transparent bg-green-600 text-white px-3 py-1 text-sm font-bold'
   when 'warning'
     'border-transparent bg-yellow-500 text-slate-50 hover:bg-yellow-600'
   when 'info'
-    'border-transparent bg-blue-500 text-slate-50 hover:bg-blue-600'
+    'border-transparent text-white px-3 py-1 text-sm font-bold'
   else
     'border-transparent bg-slate-900 text-slate-50 hover:bg-slate-800'
   end
@@ -30,6 +30,6 @@
   all_classes = "#{base_classes} #{variant_classes} #{classes}"
 %>
 
-<div class="<%= all_classes %>">
+<div class="<%= all_classes %>" <% if defined?(style) && style %> style="<%= style %>"<% end %>>
   <%= yield %>
 </div>

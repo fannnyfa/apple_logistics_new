@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_08_160125) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_16_155257) do
   create_table "collections", force: :cascade do |t|
     t.string "farm_name"
     t.integer "quantity"
@@ -20,6 +20,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_08_160125) do
     t.integer "status", default: 1, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "weight", default: "10kg"
+    t.string "product_name", default: "사과"
     t.index ["market_id"], name: "index_collections_on_market_id"
   end
 

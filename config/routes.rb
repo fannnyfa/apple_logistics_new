@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   resources :collections do
     collection do
       get :history
+      get :invoice
     end
     member do
       patch :update_status
