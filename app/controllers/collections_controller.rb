@@ -41,6 +41,7 @@ class CollectionsController < ApplicationController
     @date = Date.parse(params[:date])
     @collections_by_market = Collection.includes(:market)
                                       .where(scheduled_at: @date.beginning_of_day..@date.end_of_day)
+                                      .where(status: :completed)
                                       .group_by(&:market)
 
     respond_to do |format|

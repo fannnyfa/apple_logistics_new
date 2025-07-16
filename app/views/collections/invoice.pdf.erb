@@ -45,7 +45,7 @@
         %>
           <tr>
             <% if left_item %>
-              <td><%= left_item.farm_name %></td>
+              <td style="white-space: nowrap; font-size: <%= left_item.farm_name.length > 6 ? '11px' : '13px' %>;"><%= left_item.farm_name %></td>
               <td><%= left_item.product_name || "사과" %></td>
               <td><%= left_item.weight %></td>
               <td style="border-right: 3px double #000;"><%= left_item.quantity || 0 %></td>
@@ -54,7 +54,7 @@
             <% end %>
 
             <% if right_item %>
-              <td><%= right_item.farm_name %></td>
+              <td style="white-space: nowrap; font-size: <%= right_item.farm_name.length > 6 ? '11px' : '13px' %>;"><%= right_item.farm_name %></td>
               <td><%= right_item.product_name || "사과" %></td>
               <td><%= right_item.weight %></td>
               <td><%= right_item.quantity || 0 %></td>
