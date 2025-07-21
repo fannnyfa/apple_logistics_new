@@ -1,5 +1,5 @@
-<tr id="collection_<%= collection.id %>" class="hover:bg-slate-50 transition-colors">
-  <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
+<tr id="collection_<%= collection.id %>" class="<%= collection.in_progress? ? 'bg-blue-100 hover:bg-blue-200' : 'hover:bg-slate-50' %> transition-colors">
+  <td class="pl-4 pr-4 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
     <%= collection.farm_name %>
   </td>
   <td class="px-4 py-4 whitespace-nowrap text-sm text-slate-600">
@@ -9,7 +9,7 @@
     <%= collection.quantity %>
   </td>
   <td class="px-4 py-4 whitespace-nowrap text-sm text-slate-600">
-    <%= collection.weight || "10kg" %>
+    <%= collection.product_name == "깻잎" ? "-" : (collection.weight || "10kg") %>
   </td>
   <td class="px-4 py-4 whitespace-nowrap text-sm text-slate-600">
     <%= collection.market.name %>
@@ -37,12 +37,13 @@
   <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">
     <div class="flex space-x-2">
       <% if collection.in_progress? %>
-        <%= link_to "수거완료", update_status_collection_path(collection, status: 'completed'), 
-            data: { "turbo-method": :patch },
-            class: "inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors" %>
+        <%= button_to "수거완료", update_status_collection_path(collection, status: :completed), 
+            method: :patch,
+            class: "inline-flex items-center px-3 py-1.5 border-0 text-xs font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors" %>
       <% elsif collection.completed? %>
-        <%= link_to "되돌리기", revert_collection_path(collection), 
-            data: { "turbo-method": :patch, "turbo-confirm": "접수 상태로 되돌리시겠습니까?" },
+        <%= button_to "되돌리기", revert_collection_path(collection), 
+            method: :patch,
+            onclick: "return confirm('접수 상태로 되돌리시겠습니까?')",
             class: "inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors", 
             style: "background-color: #2563eb;" %>
       <% end %>

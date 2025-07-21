@@ -36,10 +36,13 @@
           </label>
           <%= form.select :product_name, 
               options_for_select([
-                ["사과", "사과"]
+                ["사과", "사과"],
+                ["깻잎", "깻잎"],
+                ["깻잎 바라", "깻잎 바라"]
               ], "사과"),
               {},
-              { class: "flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" } %>
+              { class: "flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50", 
+                id: "product_select" } %>
         </div>
 
         <!-- Quantity Field -->
@@ -59,7 +62,14 @@
                 ["5kg", "5kg"]
               ], "10kg"),
               {},
-              { class: "flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" } %>
+              { class: "flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50", 
+                id: "weight_select" } %>
+          <%= text_field_tag "weight_manual", "5kg",
+              placeholder: "무게를 입력하세요 (예: 5kg)",
+              class: "flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50", 
+              id: "weight_input",
+              style: "display: none;" %>
+          <%= form.hidden_field :weight, id: "weight_hidden" %>
         </div>
 
         <!-- Market Selection -->
@@ -83,10 +93,476 @@
 
         <!-- Action Buttons -->
         <div class="flex flex-col sm:flex-row gap-3 pt-4">
-          <%= form.submit "접수 등록", class: "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-900 text-slate-50 hover:bg-slate-800 shadow-sm h-10 px-4 py-2 cursor-pointer" %>
+          <%= form.submit "접수 등록", class: "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-100 text-slate-900 hover:bg-slate-200 border border-slate-200 h-10 px-4 py-2 cursor-pointer" %>
           <%= link_to "취소", collections_path, class: "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-100 text-slate-900 hover:bg-slate-200 border border-slate-200 h-10 px-4 py-2" %>
+          <!-- 음성입력 버튼 -->
+          <button type="button" 
+                  id="voiceButton"
+                  class="rounded-full bg-slate-100 text-slate-800 text-sm px-4 py-2 border border-slate-300 hover:bg-slate-200 ml-auto transition-all duration-200"
+                  onclick="startVoiceInput()">
+            🎤 음성입력
+          </button>
         </div>
       <% end %>
     <% end %>
   <% end %>
 </div>
+
+<script>
+// 제품 선택에 따른 무게 필드 변경
+document.addEventListener('DOMContentLoaded', function() {
+  const productSelect = document.getElementById('product_select');
+  const weightSelect = document.getElementById('weight_select');
+  const weightInput = document.getElementById('weight_input');
+  const weightHidden = document.getElementById('weight_hidden');
+  
+  function toggleWeightField() {
+    const selectedProduct = productSelect.value;
+    
+    if (selectedProduct === '깻잎 바라') {
+      // 깻잎 바라 선택 시 수동 입력 필드 표시
+      weightSelect.style.display = 'none';
+      weightInput.style.display = 'block';
+      weightInput.required = true;
+      weightSelect.required = false;
+      weightHidden.value = weightInput.value;
+    } else if (selectedProduct === '깻잎') {
+      // 깻잎 선택 시 무게 필드 숨김
+      weightSelect.style.display = 'none';
+      weightInput.style.display = 'none';
+      weightSelect.required = false;
+      weightInput.required = false;
+      weightHidden.value = '';
+    } else {
+      // 사과 선택 시 드롭다운 표시
+      weightSelect.style.display = 'block';
+      weightInput.style.display = 'none';
+      weightSelect.required = true;
+      weightInput.required = false;
+      weightHidden.value = weightSelect.value;
+    }
+  }
+  
+  // 무게 값 변경 시 숨겨진 필드 업데이트
+  weightSelect.addEventListener('change', function() {
+    weightHidden.value = weightSelect.value;
+  });
+  
+  weightInput.addEventListener('input', function() {
+    weightHidden.value = weightInput.value;
+  });
+  
+  // 초기 상태 설정
+  toggleWeightField();
+  
+  // 제품 변경 시 무게 필드 변경
+  productSelect.addEventListener('change', toggleWeightField);
+});
+
+// 버튼 상태 변경 함수들
+function setVoiceButtonListening() {
+  const button = document.getElementById('voiceButton');
+  if (button) {
+    button.textContent = '🔴 인식중...';
+    button.className = 'rounded-full bg-red-500 text-black text-sm px-4 py-2 border border-red-600 ml-auto transition-all duration-200 animate-pulse';
+    button.disabled = true;
+    console.log("🔴 버튼 상태: 인식중으로 변경");
+  }
+}
+
+function setVoiceButtonDefault() {
+  const button = document.getElementById('voiceButton');
+  if (button) {
+    button.textContent = '🎤 음성입력';
+    button.className = 'rounded-full bg-slate-100 text-slate-800 text-sm px-4 py-2 border border-slate-300 hover:bg-slate-200 ml-auto transition-all duration-200';
+    button.disabled = false;
+    console.log("🎤 버튼 상태: 기본으로 복구");
+  }
+}
+
+function startVoiceInput() {
+  console.log("🎤 음성입력 버튼 클릭됨");
+  
+  // 브라우저의 Web Speech API 지원 여부 확인
+  const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  
+  if (!Recognition) {
+    console.log("❌ 음성 인식 미지원 브라우저");
+    alert("이 브라우저는 음성 인식을 지원하지 않습니다");
+    return;
+  }
+  
+  console.log("✅ 음성 인식 API 사용 가능");
+  
+  // 음성 인식 객체 생성 및 설정
+  const recognition = new Recognition();
+  recognition.lang = 'ko-KR';  // 한국어로 설정
+  recognition.interimResults = true;  // 중간 결과도 받기 (더 반응성 향상)
+  recognition.continuous = true;  // 연속 인식 모드
+  recognition.maxAlternatives = 1;  // 최상위 결과만 받기
+  
+  // 음성 인식 시간 제한 설정 (20초로 연장)
+  let speechTimeout = setTimeout(() => {
+    console.log("⏰ 음성 인식 시간 초과");
+    recognition.stop();
+    setVoiceButtonDefault(); // 타임아웃 시에도 버튼 상태 복구
+    alert("음성 인식이 완료되었습니다.");
+  }, 20000);
+  
+  // 음성 중단 후 자동 종료를 방지하기 위한 타이머
+  let silenceTimer = null;
+  
+  // 음성 인식 시작 이벤트
+  recognition.onstart = () => {
+    console.log("🎙️ 음성 인식 시작됨 - 말씀해 주세요!");
+    setVoiceButtonListening(); // 버튼 상태를 인식중으로 변경
+  };
+  
+  // 음성 인식 결과 처리
+  recognition.onresult = (event) => {
+    // 중간 결과와 최종 결과 구분
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const result = event.results[i];
+      const transcript = result[0].transcript;
+      
+      if (result.isFinal) {
+        // 최종 결과일 때만 필드 입력
+        console.log("📝 최종 인식된 텍스트:", transcript);
+        clearTimeout(speechTimeout);  // 타임아웃 클리어
+        clearTimeout(silenceTimer);   // 침묵 타이머 클리어
+        
+        // 인식된 텍스트를 각 입력 필드에 자동 입력
+        fillFormFields(transcript);
+        
+        // 음성 인식 종료 (최종 결과를 받았으므로)
+        recognition.stop();
+        setVoiceButtonDefault(); // 버튼 상태를 기본으로 복구
+        return;
+      } else {
+        // 중간 결과 (사용자가 말하고 있는 중)
+        console.log("🔄 중간 인식 결과:", transcript);
+        
+        // 침묵 타이머 초기화 (계속 말하고 있으므로)
+        clearTimeout(silenceTimer);
+        silenceTimer = setTimeout(() => {
+          console.log("🤫 침묵 감지, 음성 인식 종료");
+          recognition.stop();
+          setVoiceButtonDefault(); // 버튼 상태를 기본으로 복구
+        }, 3000); // 3초 침묵 후 종료
+      }
+    }
+  };
+  
+  // 음성 인식 종료 이벤트 (자동 종료 방지)
+  recognition.onspeechend = () => {
+    console.log("🔇 음성 감지 종료됨 - 하지만 계속 대기 중...");
+    // 바로 종료하지 않고 침묵 타이머로 관리
+  };
+  
+  // 음성 인식 완전 종료 이벤트
+  recognition.onend = () => {
+    console.log("🏁 음성 인식 완전 종료됨");
+    clearTimeout(speechTimeout);  // 타임아웃 클리어
+    clearTimeout(silenceTimer);   // 침묵 타이머 클리어
+    setVoiceButtonDefault(); // 버튼 상태를 기본으로 복구
+  };
+  
+  // 음성 인식 에러 처리
+  recognition.onerror = (event) => {
+    clearTimeout(speechTimeout);  // 타임아웃 클리어
+    clearTimeout(silenceTimer);   // 침묵 타이머 클리어
+    console.error("❌ 음성 인식 오류:", event.error);
+    
+    let errorMessage = "음성 인식 중 오류가 발생했습니다";
+    switch(event.error) {
+      case 'no-speech':
+        errorMessage = "음성이 감지되지 않았습니다. 마이크를 확인하고 다시 시도해 주세요";
+        break;
+      case 'audio-capture':
+        errorMessage = "마이크에 접근할 수 없습니다. 브라우저 권한을 확인해 주세요";
+        break;
+      case 'not-allowed':
+        errorMessage = "마이크 사용 권한이 거부되었습니다. 브라우저 설정에서 마이크 권한을 허용해 주세요";
+        break;
+      case 'network':
+        errorMessage = "네트워크 오류가 발생했습니다. 인터넷 연결을 확인해 주세요";
+        break;
+      case 'aborted':
+        errorMessage = "음성 인식이 중단되었습니다";
+        break;
+    }
+    
+    alert(errorMessage);
+    setVoiceButtonDefault(); // 에러 발생 시에도 버튼 상태를 기본으로 복구
+  };
+  
+  // 음성 인식 시작
+  try {
+    recognition.start();
+    console.log("🚀 음성 인식 시작 시도...");
+  } catch (error) {
+    console.error("❌ 음성 인식 시작 실패:", error);
+    setVoiceButtonDefault(); // 시작 실패 시에도 버튼 상태 복구
+    alert("음성 인식을 시작할 수 없습니다");
+  }
+}
+
+// 인식된 텍스트를 분석하여 각 입력 필드에 자동 입력
+function fillFormFields(transcript) {
+  console.log("📋 필드 자동 입력 시작:", transcript);
+  
+  // 텍스트를 공백으로 분리하여 각 단어 분석
+  const words = transcript.trim().split(/\s+/);
+  console.log("🔤 분석할 단어들:", words);
+  
+  // 1. 생산자 이름 추출 (첫 번째 한글 이름으로 추정되는 부분)
+  const farmNameField = document.getElementById('collection_farm_name');
+  if (farmNameField && words.length > 0) {
+    // 첫 번째 단어가 한글이고 숫자가 아닌 경우 생산자 이름으로 판단
+    const firstWord = words[0];
+    if (/^[가-힣]+$/.test(firstWord) && !/\d/.test(firstWord)) {
+      farmNameField.value = firstWord;
+      console.log("👤 생산자 이름 설정:", firstWord);
+    }
+  }
+  
+  // 2. 품명 설정 (깻잎, 깻잎바라 감지하여 설정, 기본값 "사과")
+  const productNameField = document.getElementById('collection_product_name');
+  if (productNameField) {
+    let selectedProduct = '사과'; // 기본값
+    
+    if (transcript.includes('깻잎바라') || transcript.includes('깻잎 바라')) {
+      selectedProduct = '깻잎 바라';
+    } else if (transcript.includes('깻잎')) {
+      selectedProduct = '깻잎';
+    }
+    
+    productNameField.value = selectedProduct;
+    console.log("🌿 품명 설정:", selectedProduct);
+    
+    // 제품 변경 후 무게 필드도 업데이트
+    productNameField.dispatchEvent(new Event('change'));
+  }
+  
+  // 3. 수량 추출 (단어들 중에서 숫자 찾기)
+  const quantityField = document.getElementById('collection_quantity');
+  if (quantityField) {
+    // 숫자가 포함된 단어 찾기 (예: "5개", "10", "다섯개" 등)
+    let quantity = null;
+    
+    for (let word of words) {
+      // 순수 숫자인 경우
+      if (/^\d+$/.test(word)) {
+        quantity = word;
+        break;
+      }
+      // 숫자+개 형태인 경우
+      const numberMatch = word.match(/^(\d+)개?$/);
+      if (numberMatch) {
+        quantity = numberMatch[1];
+        break;
+      }
+    }
+    
+    // 한글 숫자도 처리
+    if (!quantity) {
+      const koreanNumbers = {
+        '하나': '1', '한개': '1', '일': '1',
+        '둘': '2', '두개': '2', '이': '2',
+        '셋': '3', '세개': '3', '삼': '3',
+        '넷': '4', '네개': '4', '사': '4',
+        '다섯': '5', '다섯개': '5', '오': '5',
+        '여섯': '6', '여섯개': '6', '육': '6',
+        '일곱': '7', '일곱개': '7', '칠': '7',
+        '여덟': '8', '여덟개': '8', '팔': '8',
+        '아홉': '9', '아홉개': '9', '구': '9',
+        '열': '10', '열개': '10', '십': '10'
+      };
+      
+      for (let word of words) {
+        if (koreanNumbers[word]) {
+          quantity = koreanNumbers[word];
+          break;
+        }
+      }
+    }
+    
+    if (quantity) {
+      quantityField.value = quantity;
+      console.log("🔢 수량 설정:", quantity);
+    }
+  }
+  
+  // 4. 무게 설정 (5킬로 언급 시 5kg, 아니면 10kg)
+  const weightField = document.getElementById('collection_weight');
+  if (weightField) {
+    // 더 정확한 5kg 판별: 단독 "5", "다섯", "오킬로", "5킬로", "5kg" 등만 매칭
+    const hasFiveKg = /\b5\b|다섯|오킬로|다섯킬로|5킬로|5kg|오\s*킬로|다섯\s*킬로/.test(transcript);
+    
+    // "오십", "오십일" 등은 제외하고 정확한 5kg 표현만 매칭
+    const isNotFifty = !/오십|오십일|오십이|오십삼|오십사|오십오|오십육|오십칠|오십팔|오십구/.test(transcript);
+    
+    const selectedWeight = (hasFiveKg && isNotFifty) ? '5kg' : '10kg';
+    weightField.value = selectedWeight;
+    console.log("⚖️ 무게 설정:", selectedWeight, "(5kg 판별:", hasFiveKg, ", 오십 제외:", isNotFifty, ")");
+  }
+  
+  // 5. 공판장 자동 선택 (단어 단위로 매핑 검사)
+  const marketField = document.getElementById('collection_market_id');
+  if (marketField) {
+    const options = Array.from(marketField.options);
+    console.log("🏪 공판장 옵션 검사 중...", options.length + "개");
+    console.log("🎤 전체 음성인식 텍스트:", transcript);
+    console.log("📋 사용 가능한 공판장 옵션들:", options.map(o => o.text));
+    
+    // 공판장 매핑 (줄임말과 전체 명칭 모두 포함)
+    const marketMappings = {
+      // 엄궁농협공판장 매핑
+      "부공": "엄궁농협공판장",
+      "엄궁농협공판장": "엄궁농협공판장",
+      "엄궁농협": "엄궁농협공판장",
+      "엄궁": "엄궁농협공판장",
+      
+      // 항도청과 매핑
+      "항도": "항도청과",
+      "항도청과": "항도청과",
+      
+      // 부산청과 매핑
+      "부청": "부산청과",
+      "부산청과": "부산청과",
+      "부산": "부산청과",
+      
+      // 반여농협공판장 매핑
+      "반농": "반여농협공판장",
+      "반여농협공판장": "반여농협공판장",
+      "반여농협": "반여농협공판장",
+      "반여": "반여농협공판장",
+      
+      // 중앙청과 매핑
+      "중앙": "중앙청과",
+      "중앙청과": "중앙청과",
+      
+      // 동부청과 매핑
+      "동부": "동부청과",
+      "동부청과": "동부청과",
+      
+      // 추가 가능한 매핑 (필요시)
+      "가락": "서울가락공판장",
+      "서울가락공판장": "서울가락공판장",
+      "서울": "서울가락공판장"
+    };
+    
+    let selectedMarket = null;
+    
+    // 1단계: 전체 텍스트에서 직접 키워드 검사 (우선순위)
+    const directMappings = {
+      "반농": "반여농협공판장",
+      "반여": "반여농협공판장",
+      "반여농협": "반여농협공판장",
+      "반여농공": "반여농협공판장",
+      "반여농협공판장": "반여농협공판장",
+      "부공": "엄궁농협공판장", 
+      "엄궁": "엄궁농협공판장",
+      "엄궁농협": "엄궁농협공판장",
+      "엄궁농공": "엄궁농협공판장",
+      "부청": "부산청과",
+      "부산청과": "부산청과",
+      "항도": "항도청과",
+      "항도청과": "항도청과",
+      "중앙": "중앙청과",
+      "중앙청과": "중앙청과",
+      "동부": "동부청과",
+      "동부청과": "동부청과"
+    };
+    
+    // 직접 매핑 먼저 확인 (더 유연한 매칭)
+    for (let [keyword, targetName] of Object.entries(directMappings)) {
+      console.log("🔍 키워드 검사:", keyword, "텍스트에 포함?", transcript.includes(keyword));
+      
+      if (transcript.includes(keyword)) {
+        console.log("🎯 키워드 발견:", keyword, "→ 대상:", targetName);
+        
+        const matchedOption = options.find(option => {
+          if (!option.text || option.text === '공판장을 선택하세요') return false;
+          console.log("🔍 옵션 비교:", option.text, "vs", targetName);
+          return option.text.includes(targetName) || targetName.includes(option.text);
+        });
+        
+        console.log("🏪 매칭된 옵션:", matchedOption ? matchedOption.text : "없음");
+        
+        if (matchedOption) {
+          selectedMarket = matchedOption;
+          console.log("✅ 직접 매핑 성공:", keyword, "→", targetName, "선택된 옵션:", matchedOption.text);
+          break;
+        } else {
+          console.log("❌ 옵션 매칭 실패 for", keyword, "→", targetName);
+        }
+      }
+    }
+    
+    // 2단계: 각 단어별로 매핑 테이블 검사 (직접 매핑이 실패한 경우)
+    if (!selectedMarket) {
+      console.log("🔍 매핑 테이블 검사 시작, 분석할 단어들:", words);
+      
+      for (let word of words) {
+        console.log("🔍 단어 확인:", word, "매핑 존재:", !!marketMappings[word]);
+        
+        if (marketMappings[word]) {
+          const targetMarketName = marketMappings[word];
+          console.log("📍 매핑 찾음:", word, "→", targetMarketName);
+          
+          // 매핑된 공판장 이름으로 옵션 찾기 (더 정확한 매칭)
+          const matchedOption = options.find(option => {
+            if (!option.text || option.text === '공판장을 선택하세요') return false;
+            
+            // 정확한 이름 매칭 또는 포함 매칭
+            return option.text === targetMarketName || 
+                   option.text.includes(targetMarketName) ||
+                   targetMarketName.includes(option.text);
+          });
+          
+          console.log("🏪 옵션 검색 결과:", matchedOption ? matchedOption.text : "없음");
+          
+          if (matchedOption) {
+            selectedMarket = matchedOption;
+            console.log("✅ 공판장 매핑 성공:", word, "→", targetMarketName);
+            break;
+          } else {
+            console.log("❌ 옵션에서 매칭 실패:", targetMarketName);
+          }
+        }
+      }
+    }
+    
+    // 3단계: 매핑으로 찾지 못한 경우 기존 방식으로 부분 일치 검사
+    if (!selectedMarket) {
+      for (let option of options) {
+        if (option.text && option.text !== '공판장을 선택하세요') {
+          // 옵션 텍스트의 각 단어를 검사
+          const optionWords = option.text.split(/\s+/);
+          const foundMatch = optionWords.some(word => {
+            // 한 글자 단어는 제외하고 부분 일치 검사
+            return word.length > 1 && transcript.includes(word);
+          });
+          
+          if (foundMatch) {
+            selectedMarket = option;
+            console.log("🏪 공판장 부분 일치 성공:", option.text);
+            break;
+          }
+        }
+      }
+    }
+    
+    // 최종 선택 적용
+    if (selectedMarket) {
+      marketField.value = selectedMarket.value;
+      console.log("🏪 공판장 설정 완료:", selectedMarket.text);
+    } else {
+      console.log("🏪 공판장 매칭 실패: 해당하는 공판장을 찾을 수 없음");
+    }
+  }
+  
+  console.log("✅ 필드 자동 입력 완료");
+}
+</script>

@@ -1,4 +1,15 @@
-<% @collections_by_market.each do |market, collections| %>
+<%
+  # 사과와 깻잎류로 분리
+  @collections_by_market.each do |market, collections|
+    # 사과 컬렉션들
+    apple_collections = collections.select { |c| c.product_name.blank? || c.product_name == "사과" }
+    # 깻잎류 컬렉션들 (깻잎, 깻잎 바라)
+    sesame_collections = collections.select { |c| c.product_name == "깻잎" || c.product_name == "깻잎 바라" }
+%>
+
+<% # 사과 페이지 %>
+<% if apple_collections.any? %>
+  <% collections = apple_collections %>
   <div class="invoice-page-a4">
     <div class="header">
       <div class="title-section">
@@ -45,18 +56,18 @@
         %>
           <tr>
             <% if left_item %>
-              <td style="white-space: nowrap; font-size: <%= left_item.farm_name.length > 6 ? '11px' : '13px' %>;"><%= left_item.farm_name %></td>
+              <td style="white-space: nowrap; font-size: <%= left_item.farm_name.length > 7 ? '10px' : '13px' %>;"><%= left_item.farm_name %></td>
               <td><%= left_item.product_name || "사과" %></td>
-              <td><%= left_item.weight %></td>
+              <td><%= left_item.product_name == "깻잎" ? "-" : left_item.weight %></td>
               <td style="border-right: 3px double #000;"><%= left_item.quantity || 0 %></td>
             <% else %>
               <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td style="border-right: 3px double #000;">&nbsp;</td>
             <% end %>
 
             <% if right_item %>
-              <td style="white-space: nowrap; font-size: <%= right_item.farm_name.length > 6 ? '11px' : '13px' %>;"><%= right_item.farm_name %></td>
+              <td style="white-space: nowrap; font-size: <%= right_item.farm_name.length > 7 ? '10px' : '13px' %>;"><%= right_item.farm_name %></td>
               <td><%= right_item.product_name || "사과" %></td>
-              <td><%= right_item.weight %></td>
+              <td><%= right_item.product_name == "깻잎" ? "-" : right_item.weight %></td>
               <td><%= right_item.quantity || 0 %></td>
             <% else %>
               <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
@@ -64,47 +75,111 @@
           </tr>
         <% end %>
 
-        <!-- 합계 (10kg, 5kg) -->
-        <% kg10_quantity = collections.select { |c| c.weight == "10kg" }.sum(&:quantity) %>
-        <% kg5_quantity = collections.select { |c| c.weight == "5kg" }.sum(&:quantity) %>
+        <!-- 합계 (10kg, 5kg) 및 깻잎 제품들 -->
         <% 
-          show_10kg = kg10_quantity > 0
-          show_5kg = kg5_quantity > 0
-          total_rows = (show_10kg ? 1 : 0) + (show_5kg ? 1 : 0)
+          # 사과 제품 (기존 로직)
+          apple_10kg_quantity = collections.select { |c| c.weight == "10kg" && (c.product_name == "사과" || c.product_name.blank?) }.sum(&:quantity)
+          apple_5kg_quantity = collections.select { |c| c.weight == "5kg" && (c.product_name == "사과" || c.product_name.blank?) }.sum(&:quantity)
+          
+          # 깻잎 제품
+          sesame_leaf_quantity = collections.select { |c| c.product_name == "깻잎" }.sum(&:quantity)
+          sesame_leaf_bara_collections = collections.select { |c| c.product_name == "깻잎 바라" }
+          
+          show_apple_10kg = apple_10kg_quantity > 0
+          show_apple_5kg = apple_5kg_quantity > 0
+          show_sesame_leaf = sesame_leaf_quantity > 0
+          show_sesame_leaf_bara = sesame_leaf_bara_collections.any?
+          
+          total_rows = (show_apple_10kg ? 1 : 0) + (show_apple_5kg ? 1 : 0) + (show_sesame_leaf ? 1 : 0) + (show_sesame_leaf_bara ? 1 : 0)
         %>
-        <% if show_10kg %>
+        <% current_row = 0 %>
+        
+        <!-- 사과 10kg -->
+        <% if show_apple_10kg %>
+          <% current_row += 1 %>
           <tr>
-            <% if total_rows > 1 %>
+            <% if current_row == 1 && total_rows > 1 %>
               <td colspan="2" rowspan="<%= total_rows %>" style="text-align: center; vertical-align: middle;"><strong>합계</strong></td>
-            <% else %>
+            <% elsif total_rows == 1 %>
               <td colspan="2" style="text-align: center;"><strong>합계</strong></td>
             <% end %>
-            <td style="text-align: center;"><strong>10kg</strong></td>
-            <td style="border-right: 3px double #000;"><strong><%= kg10_quantity %></strong></td>
+            <td style="text-align: center;"><strong>사과 10kg</strong></td>
+            <td style="border-right: 3px double #000;"><strong><%= apple_10kg_quantity %></strong></td>
 
-            <% if total_rows > 1 %>
+            <% if current_row == 1 && total_rows > 1 %>
               <td rowspan="<%= total_rows %>" style="text-align: center; vertical-align: middle;"><strong>운임</strong></td>
-            <% else %>
+            <% elsif total_rows == 1 %>
               <td style="text-align: center;"><strong>운임</strong></td>
             <% end %>
-            <td colspan="2" style="text-align: center;"><strong>1,000×<%= kg10_quantity %></strong></td>
-            <td><strong><%= number_with_delimiter(collections.select { |c| c.weight == "10kg" }.sum { |c| c.quantity.to_i * 1000 }) %>원</strong></td>
+            <td colspan="2" style="text-align: center;"><strong>1,000×<%= apple_10kg_quantity %></strong></td>
+            <td><strong><%= number_with_delimiter(apple_10kg_quantity * 1000) %>원</strong></td>
           </tr>
         <% end %>
 
-        <% if show_5kg %>
+        <!-- 사과 5kg -->
+        <% if show_apple_5kg %>
+          <% current_row += 1 %>
           <tr>
-            <% unless show_10kg %>
+            <% if current_row == 1 && total_rows > 1 %>
+              <td colspan="2" rowspan="<%= total_rows %>" style="text-align: center; vertical-align: middle;"><strong>합계</strong></td>
+            <% elsif total_rows == 1 %>
               <td colspan="2" style="text-align: center;"><strong>합계</strong></td>
             <% end %>
-            <td style="text-align: center;"><strong>5kg</strong></td>
-            <td style="border-right: 3px double #000;"><strong><%= kg5_quantity %></strong></td>
+            <td style="text-align: center;"><strong>사과 5kg</strong></td>
+            <td style="border-right: 3px double #000;"><strong><%= apple_5kg_quantity %></strong></td>
 
-            <% unless show_10kg %>
+            <% if current_row == 1 && total_rows > 1 %>
+              <td rowspan="<%= total_rows %>" style="text-align: center; vertical-align: middle;"><strong>운임</strong></td>
+            <% elsif total_rows == 1 %>
               <td style="text-align: center;"><strong>운임</strong></td>
             <% end %>
-            <td colspan="2" style="text-align: center;"><strong>700×<%= kg5_quantity %></strong></td>
-            <td><strong><%= number_with_delimiter(collections.select { |c| c.weight == "5kg" }.sum { |c| c.quantity.to_i * 700 }) %>원</strong></td>
+            <td colspan="2" style="text-align: center;"><strong>600×<%= apple_5kg_quantity %></strong></td>
+            <td><strong><%= number_with_delimiter(apple_5kg_quantity * 600) %>원</strong></td>
+          </tr>
+        <% end %>
+
+        <!-- 깻잎 -->
+        <% if show_sesame_leaf %>
+          <% current_row += 1 %>
+          <tr>
+            <% if current_row == 1 && total_rows > 1 %>
+              <td colspan="2" rowspan="<%= total_rows %>" style="text-align: center; vertical-align: middle;"><strong>합계</strong></td>
+            <% elsif total_rows == 1 %>
+              <td colspan="2" style="text-align: center;"><strong>합계</strong></td>
+            <% end %>
+            <td style="text-align: center;"><strong>깻잎</strong></td>
+            <td style="border-right: 3px double #000;"><strong><%= sesame_leaf_quantity %></strong></td>
+
+            <% if current_row == 1 && total_rows > 1 %>
+              <td rowspan="<%= total_rows %>" style="text-align: center; vertical-align: middle;"><strong>운임</strong></td>
+            <% elsif total_rows == 1 %>
+              <td style="text-align: center;"><strong>운임</strong></td>
+            <% end %>
+            <td colspan="2" style="text-align: center;"><strong>600×<%= sesame_leaf_quantity %></strong></td>
+            <td><strong><%= number_with_delimiter(sesame_leaf_quantity * 600) %>원</strong></td>
+          </tr>
+        <% end %>
+
+        <!-- 깻잎 바라 -->
+        <% if show_sesame_leaf_bara %>
+          <% sesame_leaf_bara_quantity = sesame_leaf_bara_collections.sum(&:quantity) %>
+          <% current_row += 1 %>
+          <tr>
+            <% if current_row == 1 && total_rows > 1 %>
+              <td colspan="2" rowspan="<%= total_rows %>" style="text-align: center; vertical-align: middle;"><strong>합계</strong></td>
+            <% elsif total_rows == 1 %>
+              <td colspan="2" style="text-align: center;"><strong>합계</strong></td>
+            <% end %>
+            <td style="text-align: center;"><strong>깻잎 바라</strong></td>
+            <td style="border-right: 3px double #000;"><strong><%= sesame_leaf_bara_quantity %></strong></td>
+
+            <% if current_row == 1 && total_rows > 1 %>
+              <td rowspan="<%= total_rows %>" style="text-align: center; vertical-align: middle;"><strong>운임</strong></td>
+            <% elsif total_rows == 1 %>
+              <td style="text-align: center;"><strong>운임</strong></td>
+            <% end %>
+            <td colspan="2" style="text-align: center;"><strong>1,000×<%= sesame_leaf_bara_quantity %></strong></td>
+            <td><strong><%= number_with_delimiter(sesame_leaf_bara_quantity * 1000) %>원</strong></td>
           </tr>
         <% end %>
 
@@ -115,8 +190,15 @@
 
           <td colspan="2" style="text-align: center; font-size: 20px;"><strong>총 운임</strong></td>
           <td colspan="2" style="font-size: 20px; text-align: center;"><strong><%= number_with_delimiter(collections.sum { |c| 
-            price_per_unit = c.weight == "5kg" ? 700 : 1000
-            c.quantity.to_i * price_per_unit 
+            case c.product_name
+            when "깻잎"
+              c.quantity.to_i * 600
+            when "깻잎 바라"
+              c.quantity.to_i * 1000
+            else # 사과 (기본값)
+              price_per_unit = c.weight == "5kg" ? 600 : 1000
+              c.quantity.to_i * price_per_unit
+            end
           }) %>원</strong></td>
         </tr>
 
@@ -133,6 +215,167 @@
     </table>
   </div>
 <% end %>
+
+<% # 깻잎류 페이지 %>
+<% if sesame_collections.any? %>
+  <% collections = sesame_collections %>
+  <div class="invoice-page-a4">
+    <div class="header">
+      <div class="title-section">
+        <h1 class="main-title">송  품  장</h1>
+        <div class="title-underline"></div>
+      </div>
+    </div>
+
+    <table class="info-table">
+      <tr>
+        <td colspan="4" style="border: 1px solid #000; border-right: none; padding: 8px; text-align: left; font-weight: bold;">출하일시 : <%= @date.to_date.strftime('%Y년 %m월 %d일') %></td>
+        <td colspan="4" style="border: 1px solid #000; border-left: none; padding: 8px; text-align: right; font-weight: bold;">밀양산내지소</td>
+      </tr>
+      <tr>
+        <td colspan="8" style="border: 1px solid #000; padding: 8px; text-align: left; font-weight: bold;">수신: (<%= market.name %>) 귀하</td>
+      </tr>
+    </table>
+
+    <table class="main-table-a4">
+      <thead>
+        <tr>
+          <th>생산자</th><th>품명</th><th>규격</th><th style="border-right: 3px double #000;">계</th>
+          <th>생산자</th><th>품명</th><th>규격</th><th>계</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% 
+        # 세로 우선 정렬을 위해 컬렉션을 재배열
+        left_collections = []
+        right_collections = []
+        
+        collections.each_with_index do |collection, index|
+          if index < 23
+            left_collections << collection
+          else
+            right_collections << collection
+          end
+        end
+        
+        # 23개 행으로 맞추기
+        (0...23).each do |row_index|
+          left_item = left_collections[row_index]
+          right_item = right_collections[row_index]
+        %>
+          <tr>
+            <% if left_item %>
+              <td style="white-space: nowrap; font-size: <%= left_item.farm_name.length > 7 ? '10px' : '13px' %>;"><%= left_item.farm_name %></td>
+              <td><%= left_item.product_name || "사과" %></td>
+              <td><%= left_item.product_name == "깻잎" ? "-" : left_item.weight %></td>
+              <td style="border-right: 3px double #000;"><%= left_item.quantity || 0 %></td>
+            <% else %>
+              <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td style="border-right: 3px double #000;">&nbsp;</td>
+            <% end %>
+
+            <% if right_item %>
+              <td style="white-space: nowrap; font-size: <%= right_item.farm_name.length > 7 ? '10px' : '13px' %>;"><%= right_item.farm_name %></td>
+              <td><%= right_item.product_name || "사과" %></td>
+              <td><%= right_item.product_name == "깻잎" ? "-" : right_item.weight %></td>
+              <td><%= right_item.quantity || 0 %></td>
+            <% else %>
+              <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+            <% end %>
+          </tr>
+        <% end %>
+
+        <!-- 깻잎류 합계 -->
+        <% 
+          # 깻잎 제품
+          sesame_leaf_quantity = collections.select { |c| c.product_name == "깻잎" }.sum(&:quantity)
+          sesame_leaf_bara_collections = collections.select { |c| c.product_name == "깻잎 바라" }
+          
+          show_sesame_leaf = sesame_leaf_quantity > 0
+          show_sesame_leaf_bara = sesame_leaf_bara_collections.any?
+          
+          total_rows = (show_sesame_leaf ? 1 : 0) + (show_sesame_leaf_bara ? 1 : 0)
+          current_row = 0
+        %>
+        
+        <!-- 깻잎 -->
+        <% if show_sesame_leaf %>
+          <% current_row += 1 %>
+          <tr>
+            <% if current_row == 1 && total_rows > 1 %>
+              <td colspan="2" rowspan="<%= total_rows %>" style="text-align: center; vertical-align: middle;"><strong>합계</strong></td>
+            <% elsif total_rows == 1 %>
+              <td colspan="2" style="text-align: center;"><strong>합계</strong></td>
+            <% end %>
+            <td style="text-align: center;"><strong>깻잎</strong></td>
+            <td style="border-right: 3px double #000;"><strong><%= sesame_leaf_quantity %></strong></td>
+
+            <% if current_row == 1 && total_rows > 1 %>
+              <td rowspan="<%= total_rows %>" style="text-align: center; vertical-align: middle;"><strong>운임</strong></td>
+            <% elsif total_rows == 1 %>
+              <td style="text-align: center;"><strong>운임</strong></td>
+            <% end %>
+            <td colspan="2" style="text-align: center;"><strong>600×<%= sesame_leaf_quantity %></strong></td>
+            <td><strong><%= number_with_delimiter(sesame_leaf_quantity * 600) %>원</strong></td>
+          </tr>
+        <% end %>
+
+        <!-- 깻잎 바라 -->
+        <% if show_sesame_leaf_bara %>
+          <% sesame_leaf_bara_quantity = sesame_leaf_bara_collections.sum(&:quantity) %>
+          <% current_row += 1 %>
+          <tr>
+            <% if current_row == 1 && total_rows > 1 %>
+              <td colspan="2" rowspan="<%= total_rows %>" style="text-align: center; vertical-align: middle;"><strong>합계</strong></td>
+            <% elsif total_rows == 1 %>
+              <td colspan="2" style="text-align: center;"><strong>합계</strong></td>
+            <% end %>
+            <td style="text-align: center;"><strong>깻잎 바라</strong></td>
+            <td style="border-right: 3px double #000;"><strong><%= sesame_leaf_bara_quantity %></strong></td>
+
+            <% if current_row == 1 && total_rows > 1 %>
+              <td rowspan="<%= total_rows %>" style="text-align: center; vertical-align: middle;"><strong>운임</strong></td>
+            <% elsif total_rows == 1 %>
+              <td style="text-align: center;"><strong>운임</strong></td>
+            <% end %>
+            <td colspan="2" style="text-align: center;"><strong>1,000×<%= sesame_leaf_bara_quantity %></strong></td>
+            <td><strong><%= number_with_delimiter(sesame_leaf_bara_quantity * 1000) %>원</strong></td>
+          </tr>
+        <% end %>
+
+        <!-- 전체 총계 -->
+        <tr>
+          <td colspan="2" style="text-align: center; font-size: 20px;"><strong>총 계</strong></td>
+          <td colspan="2" style="border-right: 3px double #000; font-size: 20px; text-align: center;"><strong><%= collections.sum(&:quantity) %></strong></td>
+
+          <td colspan="2" style="text-align: center; font-size: 20px;"><strong>총 운임</strong></td>
+          <td colspan="2" style="font-size: 20px; text-align: center;"><strong><%= number_with_delimiter(collections.sum { |c| 
+            case c.product_name
+            when "깻잎"
+              c.quantity.to_i * 600
+            when "깻잎 바라"
+              c.quantity.to_i * 1000
+            else # 사과 (기본값)
+              price_per_unit = c.weight == "5kg" ? 600 : 1000
+              c.quantity.to_i * price_per_unit
+            end
+          }) %>원</strong></td>
+        </tr>
+
+        <!-- 하단 정보 행 -->
+        <tr>
+          <td colspan="4" style="border: 1px solid #000; border-right: none; padding: 8px; text-align: center; font-weight: bold;">
+            계좌번호: 농협 356-0724-8964-13 (강민준)
+          </td>
+          <td colspan="4" style="border: 1px solid #000; border-left: none; padding: 8px; text-align: center; font-weight: bold;">
+            강 민 준 기사<br>H.P 010-3444-8853
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+<% end %>
+
+<% end # market loop %>
 
 <style>
   body {
