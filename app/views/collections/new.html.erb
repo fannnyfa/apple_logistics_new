@@ -23,6 +23,22 @@
           <% end %>
         <% end %>
 
+        <!-- Fruit Category Selection -->
+        <div class="space-y-2">
+          <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            과일 종류 <span class="text-red-500">*</span>
+          </label>
+          <%= select_tag :fruit_category, 
+              options_for_select([
+                ["사과", "apple"],
+                ["깻잎", "sesame"],
+                ["감", "persimmon"]
+              ], "apple"),
+              { class: "flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50", 
+                id: "fruit_category_select",
+                onchange: "handleFruitCategoryChange()" } %>
+        </div>
+
         <!-- Farm Name Field -->
         <%= render 'shared/components/input', 
             field: form.text_field(:farm_name, placeholder: "생산자명을 입력하세요"),
@@ -34,15 +50,36 @@
           <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
             품명 <span class="text-red-500">*</span>
           </label>
-          <%= form.select :product_name, 
-              options_for_select([
-                ["사과", "사과"],
-                ["깻잎", "깻잎"],
-                ["깻잎 바라", "깻잎 바라"]
-              ], "사과"),
-              {},
-              { class: "flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50", 
-                id: "product_select" } %>
+          <!-- Single hidden field for product name -->
+          <%= form.hidden_field :product_name, value: "사과", id: "collection_product_name" %>
+          
+          <!-- Apple product field (shown by default) -->
+          <div id="apple-product-field">
+            <%= text_field_tag "product_display", "사과",
+                readonly: true,
+                class: "flex h-10 w-full rounded-md border border-slate-300 bg-gray-50 px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" %>
+          </div>
+          <!-- Sesame product field (hidden by default) -->
+          <div id="sesame-product-field" style="display: none;">
+            <%= select_tag "sesame_product_display", 
+                options_for_select([
+                  ["깻잎", "깻잎"],
+                  ["깻잎 바라", "깻잎 바라"]
+                ], "깻잎"),
+                { class: "flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50", 
+                  id: "sesame_product_select" } %>
+          </div>
+          <!-- Persimmon product field (hidden by default) -->
+          <div id="persimmon-product-field" style="display: none;">
+            <%= select_tag "persimmon_product_display", 
+                options_for_select([
+                  ["반시", "반시"],
+                  ["대봉", "대봉"],
+                  ["단감", "단감"]
+                ], "반시"),
+                { class: "flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50", 
+                  id: "persimmon_product_select" } %>
+          </div>
         </div>
 
         <!-- Quantity Field -->
@@ -52,7 +89,7 @@
             required: true %>
 
         <!-- Weight Selection -->
-        <div class="space-y-2">
+        <div class="space-y-2" id="weight_section">
           <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
             무게 <span class="text-red-500">*</span>
           </label>
@@ -109,38 +146,139 @@
 </div>
 
 <script>
-// 제품 선택에 따른 무게 필드 변경
-document.addEventListener('DOMContentLoaded', function() {
-  const productSelect = document.getElementById('product_select');
+// Global function to handle weight field changes
+function toggleWeightFieldByCategory() {
+  const categorySelect = document.getElementById('fruit_category_select');
+  const weightSection = document.getElementById('weight_section');
   const weightSelect = document.getElementById('weight_select');
   const weightInput = document.getElementById('weight_input');
   const weightHidden = document.getElementById('weight_hidden');
   
-  function toggleWeightField() {
-    const selectedProduct = productSelect.value;
-    
-    if (selectedProduct === '깻잎 바라') {
-      // 깻잎 바라 선택 시 수동 입력 필드 표시
+  if (!categorySelect || !weightSection || !weightSelect || !weightInput || !weightHidden) {
+    console.log('Weight field elements not found');
+    return;
+  }
+  
+  const fruitCategory = categorySelect.value;
+  const currentProductName = document.getElementById('collection_product_name').value;
+  
+  console.log('toggleWeightFieldByCategory - Category:', fruitCategory, 'Product:', currentProductName);
+  
+  if (fruitCategory === 'apple') {
+    // 사과 선택 시 무게 섹션과 드롭다운 표시
+    weightSection.style.display = 'block';
+    weightSelect.style.display = 'block';
+    weightInput.style.display = 'none';
+    weightSelect.required = true;
+    weightInput.required = false;
+    weightHidden.value = weightSelect.value;
+    console.log('Apple selected - showing weight section and dropdown');
+  } else if (fruitCategory === 'persimmon') {
+    // 감 선택 시 무게 섹션과 드롭다운 표시 (기본값: 5kg)
+    weightSection.style.display = 'block';
+    weightSelect.style.display = 'block';
+    weightInput.style.display = 'none';
+    weightSelect.required = true;
+    weightInput.required = false;
+    weightSelect.value = '5kg'; // 감 기본값 설정
+    weightHidden.value = weightSelect.value;
+    console.log('Persimmon selected - showing weight section and dropdown with 5kg default');
+  } else if (fruitCategory === 'sesame') {
+    if (currentProductName === '깻잎 바라') {
+      // 깻잎 바라 선택 시 무게 섹션과 수동 입력 필드 표시
+      weightSection.style.display = 'block';
       weightSelect.style.display = 'none';
       weightInput.style.display = 'block';
       weightInput.required = true;
       weightSelect.required = false;
       weightHidden.value = weightInput.value;
-    } else if (selectedProduct === '깻잎') {
-      // 깻잎 선택 시 무게 필드 숨김
-      weightSelect.style.display = 'none';
-      weightInput.style.display = 'none';
+      console.log('Sesame bara selected - showing weight section and input');
+    } else if (currentProductName === '깻잎') {
+      // 깻잎 선택 시 무게 섹션 전체 숨김
+      weightSection.style.display = 'none';
       weightSelect.required = false;
       weightInput.required = false;
       weightHidden.value = '';
-    } else {
-      // 사과 선택 시 드롭다운 표시
-      weightSelect.style.display = 'block';
-      weightInput.style.display = 'none';
-      weightSelect.required = true;
-      weightInput.required = false;
-      weightHidden.value = weightSelect.value;
+      console.log('Sesame selected - hiding entire weight section');
     }
+  }
+}
+
+// Handle fruit category dropdown change
+function handleFruitCategoryChange() {
+  const categorySelect = document.getElementById('fruit_category_select');
+  const selectedCategory = categorySelect.value;
+  
+  console.log('Selected fruit category:', selectedCategory);
+  
+  // Update product fields based on selection
+  const appleProductField = document.getElementById('apple-product-field');
+  const sesameProductField = document.getElementById('sesame-product-field');
+  const persimmonProductField = document.getElementById('persimmon-product-field');
+  
+  // Hide all product fields first
+  appleProductField.style.display = 'none';
+  sesameProductField.style.display = 'none';
+  persimmonProductField.style.display = 'none';
+  
+  if (selectedCategory === 'apple') {
+    appleProductField.style.display = 'block';
+    // Set product name to 사과
+    document.getElementById('collection_product_name').value = '사과';
+  } else if (selectedCategory === 'sesame') {
+    sesameProductField.style.display = 'block';
+    // Set product name to first sesame option
+    const sesameSelect = document.getElementById('sesame_product_select');
+    if (sesameSelect) {
+      document.getElementById('collection_product_name').value = sesameSelect.value;
+    }
+  } else if (selectedCategory === 'persimmon') {
+    persimmonProductField.style.display = 'block';
+    // Set product name to first persimmon option (기본값: 반시)
+    const persimmonSelect = document.getElementById('persimmon_product_select');
+    if (persimmonSelect) {
+      document.getElementById('collection_product_name').value = persimmonSelect.value;
+    }
+  }
+  
+  // Update weight field based on category
+  toggleWeightFieldByCategory();
+}
+
+// Legacy function for backward compatibility (used by voice recognition)
+function selectFruitCategory(category) {
+  const categorySelect = document.getElementById('fruit_category_select');
+  categorySelect.value = category;
+  handleFruitCategoryChange();
+}
+
+// 제품 선택에 따른 무게 필드 변경
+document.addEventListener('DOMContentLoaded', function() {
+  const weightSelect = document.getElementById('weight_select');
+  const weightInput = document.getElementById('weight_input');
+  const weightHidden = document.getElementById('weight_hidden');
+  
+  // Sesame product selection change handler
+  const sesameProductSelect = document.getElementById('sesame_product_select');
+  if (sesameProductSelect) {
+    sesameProductSelect.addEventListener('change', function() {
+      document.getElementById('collection_product_name').value = this.value;
+      toggleWeightFieldByCategory();
+    });
+  }
+  
+  // Persimmon product selection change handler
+  const persimmonProductSelect = document.getElementById('persimmon_product_select');
+  if (persimmonProductSelect) {
+    persimmonProductSelect.addEventListener('change', function() {
+      document.getElementById('collection_product_name').value = this.value;
+      toggleWeightFieldByCategory();
+    });
+  }
+  
+  // Legacy function for backward compatibility
+  function toggleWeightField() {
+    toggleWeightFieldByCategory();
   }
   
   // 무게 값 변경 시 숨겨진 필드 업데이트
@@ -153,10 +291,9 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   
   // 초기 상태 설정
-  toggleWeightField();
-  
-  // 제품 변경 시 무게 필드 변경
-  productSelect.addEventListener('change', toggleWeightField);
+  setTimeout(function() {
+    toggleWeightFieldByCategory();
+  }, 100);
 });
 
 // 버튼 상태 변경 함수들
@@ -326,22 +463,53 @@ function fillFormFields(transcript) {
     }
   }
   
-  // 2. 품명 설정 (깻잎, 깻잎바라 감지하여 설정, 기본값 "사과")
+  // 2. 과일 종류 및 품명 설정
+  let selectedCategory = 'apple'; // 기본값
+  let selectedProduct = '사과'; // 기본값
+  
+  if (transcript.includes('깻잎바라') || transcript.includes('깻잎 바라')) {
+    selectedCategory = 'sesame';
+    selectedProduct = '깻잎 바라';
+  } else if (transcript.includes('깻잎')) {
+    selectedCategory = 'sesame';
+    selectedProduct = '깻잎';
+  } else if (transcript.includes('반시')) {
+    selectedCategory = 'persimmon';
+    selectedProduct = '반시';
+  } else if (transcript.includes('대봉')) {
+    selectedCategory = 'persimmon';
+    selectedProduct = '대봉';
+  } else if (transcript.includes('단감')) {
+    selectedCategory = 'persimmon';
+    selectedProduct = '단감';
+  } else if (transcript.includes('감')) {
+    selectedCategory = 'persimmon';
+    selectedProduct = '반시'; // 감 기본값
+  }
+  
+  // 과일 분류 선택
+  selectFruitCategory(selectedCategory);
+  
+  // 품명 설정
   const productNameField = document.getElementById('collection_product_name');
   if (productNameField) {
-    let selectedProduct = '사과'; // 기본값
-    
-    if (transcript.includes('깻잎바라') || transcript.includes('깻잎 바라')) {
-      selectedProduct = '깻잎 바라';
-    } else if (transcript.includes('깻잎')) {
-      selectedProduct = '깻잎';
-    }
-    
     productNameField.value = selectedProduct;
-    console.log("🌿 품명 설정:", selectedProduct);
+    console.log("🌿 과일 분류:", selectedCategory, "품명 설정:", selectedProduct);
     
-    // 제품 변경 후 무게 필드도 업데이트
-    productNameField.dispatchEvent(new Event('change'));
+    // 깻잎인 경우 select 옵션도 업데이트
+    if (selectedCategory === 'sesame') {
+      const sesameSelect = document.getElementById('sesame_product_select');
+      if (sesameSelect) {
+        sesameSelect.value = selectedProduct;
+      }
+    }
+    // 감인 경우 select 옵션도 업데이트
+    else if (selectedCategory === 'persimmon') {
+      const persimmonSelect = document.getElementById('persimmon_product_select');
+      if (persimmonSelect) {
+        persimmonSelect.value = selectedProduct;
+      }
+    }
   }
   
   // 3. 수량 추출 (단어들 중에서 숫자 찾기)

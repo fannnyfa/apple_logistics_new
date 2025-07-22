@@ -40,8 +40,9 @@
     
     <div class="flex gap-2">
       <%= link_to "수정", edit_collection_path(collection), class: "flex-1 text-sm px-3 py-1.5 rounded border bg-gray-100 text-gray-800 hover:bg-gray-200" %>
-      <%= link_to "삭제", collection_path(collection), 
-          data: { "turbo-method": :delete, "turbo-confirm": "정말 삭제하시겠습니까?" }, 
+      <%= button_to "삭제", collection_path(collection), 
+          method: :delete,
+          data: { "turbo-confirm": "정말 삭제하시겠습니까?" }, 
           class: "flex-1 text-sm px-3 py-1.5 rounded border bg-red-100 text-red-800 hover:bg-red-200" %>
     </div>
   </div>

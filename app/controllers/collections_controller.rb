@@ -28,6 +28,18 @@ class CollectionsController < ApplicationController
       @past_collections = @past_collections.where(status: params[:status]) if params[:status].present?
       @past_collections = @past_collections.where("receiver ILIKE ?", "%#{params[:receiver]}%") if params[:receiver].present?
       
+      # 과일종류 필터 적용
+      if params[:fruit_category].present?
+        case params[:fruit_category]
+        when 'apple'
+          @past_collections = @past_collections.where(product_name: ['사과', nil])
+        when 'sesame'
+          @past_collections = @past_collections.where(product_name: ['깻잎', '깻잎 바라'])
+        when 'persimmon'
+          @past_collections = @past_collections.where(product_name: ['반시', '대봉', '단감'])
+        end
+      end
+      
       @past_collections = @past_collections.order(scheduled_at: :desc)
     else
       @past_collections = Collection.none
@@ -67,7 +79,12 @@ class CollectionsController < ApplicationController
     @collection = Collection.new(collection_params)
     @collection.status = :in_progress
     
-    if @collection.save
+    # 공판장 선택 확인
+    if collection_params[:market_id].blank?
+      @collection.errors.add(:market_id, '공판장을 선택해주세요')
+    end
+    
+    if @collection.errors.empty? && @collection.save
       redirect_to collections_path, notice: '수거 접수가 등록되었습니다.'
     else
       @markets = Market.all
@@ -83,9 +100,15 @@ class CollectionsController < ApplicationController
   end
 
   def update
+    Rails.logger.info "UPDATE DEBUG: params = #{params.inspect}"
+    Rails.logger.info "UPDATE DEBUG: collection_params = #{collection_params.inspect}"
+    Rails.logger.info "UPDATE DEBUG: before update - weight = #{@collection.weight}"
+    
     if @collection.update(collection_params)
+      Rails.logger.info "UPDATE DEBUG: after update - weight = #{@collection.reload.weight}"
       redirect_to collections_path, notice: '수거 접수가 수정되었습니다.'
     else
+      Rails.logger.info "UPDATE DEBUG: errors = #{@collection.errors.full_messages}"
       @markets = Market.all
       render :edit, status: :unprocessable_entity
     end
