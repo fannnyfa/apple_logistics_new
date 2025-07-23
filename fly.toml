@@ -42,3 +42,7 @@ release_command = '/rails/bin/rails db:migrate'
   memory = '1gb'
   cpu_kind = 'shared'
   cpus = 1
+
+[mounts]
+  source = "data"
+  destination = "/rails/storage"
