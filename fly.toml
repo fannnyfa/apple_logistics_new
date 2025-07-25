@@ -4,7 +4,7 @@
 #
 
 app = 'apple-logistics'
-primary_region = 'hkg'
+primary_region = 'nrt'
 console_command = '/rails/bin/rails console'
 
 [build]
