@@ -50,7 +50,12 @@ class CollectionsController < ApplicationController
   end
 
   def invoice
-    @date = Date.parse(params[:date])
+    begin
+      @date = params[:date].present? ? Date.parse(params[:date]) : Date.current
+    rescue ArgumentError
+      @date = Date.current
+    end
+    
     @collections_by_market = Collection.includes(:market)
                                       .where(scheduled_at: @date.beginning_of_day..@date.end_of_day)
                                       .where(status: :completed)
