@@ -2,7 +2,7 @@
 
 Apple logistics management system with automated deployment.
 
-Test deployment fix - updated token.
+Test deployment fix - updated token. Testing automatic deployment with new FLY_API_TOKEN.
 
 This README would normally document whatever steps are necessary to get the
 application up and running.
